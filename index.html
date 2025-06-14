@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<title>Roadtrip USA sidebar glissant sans fond blanc</title>
+<title>Roadtrip USA sidebar glissant sans fond gris</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -14,25 +14,29 @@
     font-family: Arial, sans-serif;
   }
   #map {
-    position: absolute; top: 0; left: 0; bottom: 0; right: 300px;
-    width: calc(100% - 300px);
+    position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+    width: 100%;
     height: 100vh;
     z-index: 1;
-    transition: right 0.3s ease, width 0.3s ease;
   }
   #sidebar {
-    position: absolute; top: 0; right: 0; width: 300px; bottom: 0;
-    background: #f8f9fa; box-shadow: -2px 0 5px rgba(0,0,0,0.15);
-    padding: 15px 20px; overflow-y: auto;
-    display: flex; flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background: #f8f9fa;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.15);
+    padding: 15px 20px;
+    overflow-y: auto;
     z-index: 1100;
     transition: transform 0.3s ease;
-    transform: translateX(0);
-  }
-  #sidebar.closed {
     transform: translateX(100%);
   }
-  #categories { flex-shrink: 0; margin-bottom: 10px; }
+  #sidebar.open {
+    transform: translateX(0);
+  }
+  #categories { margin-bottom: 10px; }
   #search-poi {
     margin-bottom: 10px;
     padding: 6px 8px;
@@ -43,10 +47,11 @@
     box-sizing: border-box;
   }
   #poi-list {
-    flex-grow: 1; overflow-y: auto;
+    overflow-y: auto;
   }
   #poi-list h3 {
-    margin-top: 0; margin-bottom: 10px; font-size: 16px; color: #003865;
+    margin-top: 0; margin-bottom: 10px;
+    font-size: 16px; color: #003865;
   }
   .poi-item {
     padding: 6px 8px; border-bottom: 1px solid #ddd;
@@ -54,8 +59,8 @@
   }
   .poi-item:hover { background-color: #e2f0ff; }
   .poi-name { font-weight: bold; font-size: 14px; color: #1a1a1a; }
-  .poi-address { font-size: 12px; color: #555; margin: 2px 0 0 0; }
-  .poi-hours { font-size: 11px; color: #777; font-style: italic; margin: 2px 0 0 0; }
+  .poi-address { font-size: 12px; color: #555; margin-top: 2px; }
+  .poi-hours { font-size: 11px; color: #777; font-style: italic; margin-top: 2px; }
   .city-label {
     font-weight: 700; font-size: 1.15em; color: rgba(236,103,0,0.9);
     text-shadow:
@@ -85,16 +90,16 @@
   .popup-bonus { margin-top: 7px; font-size: 14px; color: #7d5227; }
   .popup-bonus-title { font-weight: bold; color: #c27a12; }
   #loader {
-    position: absolute; top: 10px; right: 320px;
+    position: absolute; top: 10px; right: 10px;
     background: rgba(255 255 255 / 0.95);
     padding: 6px 12px; border-radius: 5px;
     font-family: sans-serif; font-size: 14px;
     display: none; z-index: 1500; box-shadow: 0 0 5px #666;
   }
   #toggle-sidebar {
-    position: absolute;
+    position: fixed;
     top: 10px;
-    right: 300px;
+    right: 10px;
     z-index: 1200;
     background: #ec6700;
     color: white;
@@ -102,7 +107,7 @@
     padding: 8px 12px;
     font-size: 20px;
     cursor: pointer;
-    border-radius: 4px 0 0 4px;
+    border-radius: 4px;
     user-select: none;
     transition: background 0.3s ease;
     line-height: 1;
@@ -116,7 +121,7 @@
 
 <div id="map"></div>
 
-<button id="toggle-sidebar" aria-label="Fermer la sidebar">→</button>
+<button id="toggle-sidebar" aria-label="Ouvrir le panneau">→</button>
 
 <div id="sidebar">
   <h2>Filtres POI</h2>
@@ -134,6 +139,7 @@
 <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
 <script>
+// Ton tableau stops et categories ici (même que ton code original)
 const stops = [
   {coords: [33.9416, -118.4085], title: "Los Angeles, CA", address: "Los Angeles International Airport, 1 World Way, Los Angeles, CA 90045", date: "28 au 30 juillet", desc: "Arrivée, installation, plages, observatoire, musées, Venice Beach.", bonus: `<span class="popup-bonus-title">Le savais-tu ?</span><br>L.A. est une mosaïque de villages : Los Feliz arty, Echo Park secret, El Matador Beach pour un coucher de soleil de cinéma.<br>Le Griffith Observatory, la nuit, offre la plus belle vue sur la ville illuminée. À LAX, tu peux tomber sur un food truck de tacos dès la sortie de l’avion !`},
   {coords: [35.3658, -120.8490], title: "Morro Bay, CA", address: "Morro Bay Harbor, 127 Embarcadero, Morro Bay, CA 93442", date: "31 juillet", desc: "Route depuis LA. Photostop Morro Rock, tacos, balade.", bonus: `<span class="popup-bonus-title">Secret local</span><br>Les loutres de mer s'observent tout près de la jetée, flottant sur le dos. Morro Rock, sacrée pour la tribu Salinan, veille sur la baie depuis 23 millions d'années.<br>Les trois cheminées de l'ancienne centrale sont l'icône du port. En automne, migration des papillons monarques.`},
@@ -163,6 +169,7 @@ const categories = [
   {key:"amenity", values:["bar"], label:"Bars"},
 ];
 
+// Initialisation carte
 const map = L.map('map', {crs: L.CRS.EPSG3857, minZoom:5, maxZoom:12});
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
   attribution:'© OpenStreetMap contributors'
@@ -437,37 +444,17 @@ categories.forEach(cat => {
 
 const toggleBtn = document.getElementById('toggle-sidebar');
 const sidebar = document.getElementById('sidebar');
-const mapDiv = document.getElementById('map');
-
-function openSidebar(){
-  sidebar.classList.remove('closed');
-  mapDiv.style.right = '300px';
-  mapDiv.style.width = 'calc(100% - 300px)';
-  toggleBtn.textContent = '→';
-  toggleBtn.setAttribute('aria-label', 'Fermer la sidebar');
-  toggleBtn.style.right = '300px';
-  map.invalidateSize();
-}
-
-function closeSidebar(){
-  sidebar.classList.add('closed');
-  mapDiv.style.right = '0';
-  mapDiv.style.width = '100%';
-  toggleBtn.textContent = '←';
-  toggleBtn.setAttribute('aria-label', 'Ouvrir la sidebar');
-  toggleBtn.style.right = '0';
-  map.invalidateSize();
-}
 
 toggleBtn.addEventListener('click', () => {
-  if(sidebar.classList.contains('closed')){
-    openSidebar();
+  sidebar.classList.toggle('open');
+  if(sidebar.classList.contains('open')){
+    toggleBtn.textContent = '←';
+    toggleBtn.setAttribute('aria-label', 'Fermer le panneau');
   } else {
-    closeSidebar();
+    toggleBtn.textContent = '→';
+    toggleBtn.setAttribute('aria-label', 'Ouvrir le panneau');
   }
 });
-
-openSidebar();
 
 </script>
 
