@@ -3,427 +3,394 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Devis complet sans colonne Ctva</title>
+<title>Devis avec export PDF - inputs masqués à l’export</title>
+
 <style>
-:root {
-  --primary-color: #1e4f7a;
-  --secondary-color: #2874a6;
-  --bg-color: #fff;
-  --text-color: #222;
-  --text-light: #555;
-  --border-color: #cfdde9;
-  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --font-size-base: 11px;
-  --font-weight-normal: 400;
-  --font-weight-bold: 600;
-  --radius: 4px;
-}
-body {
-  font-family: var(--font-family);
-  background: #f4f7fa;
-  margin: 0;
-  display: flex;
-  min-height: 100vh;
-  user-select: none;
-}
-#container {
-  display: flex;
-  width: 100%;
-  max-width: 1150px;
-  margin: 20px auto;
-  gap: 15px;
-  box-sizing: border-box;
-  padding: 0 10px;
-}
-#configPanel {
-  flex: 0 0 350px;
-  background: var(--bg-color);
-  border-radius: var(--radius);
-  padding: 15px 18px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  overflow-y: auto;
-  max-height: 90vh;
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  user-select: text;
-}
-#configPanel h2 {
-  color: var(--secondary-color);
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  border-bottom: 2.5px solid var(--secondary-color);
-  padding-bottom: 6px;
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-  padding-right: 20px;
-  transition: color 0.3s ease;
-}
-#configPanel section.collapsed h2 {
-  color: var(--text-light);
-}
-#configPanel section h2::after {
-  content: "▼";
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  transition: transform 0.3s ease, content 0.3s ease;
-  color: var(--secondary-color);
-}
-#configPanel section.collapsed h2::after {
-  transform: translateY(-50%) rotate(-90deg);
-  content: "▶";
-  color: var(--text-light);
-}
-#configPanel section {
-  margin-bottom: 20px;
-  transition: margin-bottom 0.3s ease;
-}
-#configPanel section.collapsed {
-  margin-bottom: 0 !important;
-}
-#configPanel section.collapsed > *:not(h2) {
-  display: none !important;
-  pointer-events: none;
-  margin: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-  max-height: 0 !important;
-  overflow: hidden !important;
-}
-#configPanel label {
-  display: block;
-  margin-top: 8px;
-  font-weight: var(--font-weight-bold);
-  color: var(--text-light);
-}
-#configPanel input[type="text"],
-#configPanel input[type="email"],
-#configPanel input[type="date"],
-#configPanel input[type="number"],
-#configPanel textarea,
-#configPanel select {
-  width: 100%;
-  padding: 5px 9px;
-  margin-top: 3px;
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-normal);
-  border: 1.4px solid var(--border-color);
-  border-radius: var(--radius);
-  box-sizing: border-box;
-  resize: vertical;
-  background: #fafafa;
-  color: var(--text-color);
-  transition: border-color 0.25s ease, background-color 0.25s ease;
-}
-#configPanel input[type="text"]:focus,
-#configPanel input[type="email"]:focus,
-#configPanel input[type="date"]:focus,
-#configPanel input[type="number"]:focus,
-#configPanel textarea:focus,
-#configPanel select:focus {
-  border-color: var(--secondary-color);
-  background: #fff;
-  outline: none;
-}
-#configPanel textarea {
-  min-height: 60px;
-  line-height: 1.3;
-  font-family: var(--font-family);
-}
-#configPanel button {
-  margin-top: 12px;
-  padding: 7px 14px;
-  background: var(--secondary-color);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-weight: var(--font-weight-bold);
-  font-size: 0.9rem;
-  user-select: none;
-  box-shadow: 0 2px 5px rgba(40, 116, 166, 0.4);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-#configPanel button:hover,
-#configPanel button:focus {
-  background: #1b3b5a;
-}
-#articlesList {
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid var(--border-color);
-  background: #fafafa;
-  padding: 7px 8px;
-  border-radius: var(--radius);
-  color: var(--text-color);
-  font-size: 0.85rem;
-}
-.articleItem {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 5px;
-}
-.articleItem input[type="text"],
-.articleItem input[type="number"] {
-  font-size: 0.85rem;
-  padding: 4px 7px;
-  border: 1.4px solid var(--border-color);
-  border-radius: 3px;
-  background: #fff;
-  transition: border-color 0.25s ease;
-}
-.articleItem input[type="text"]:focus,
-.articleItem input[type="number"]:focus {
-  border-color: var(--secondary-color);
-  outline: none;
-}
-.descInput {
-  flex-grow: 1;
-}
-.priceInput {
-  width: 65px;
-  text-align: right;
-}
-.tvaInput {
-  width: 50px;
-  text-align: right;
-}
-.addToDevisBtn,
-.removeArticleBtn {
-  background: var(--secondary-color);
-  color: white;
-  border: none;
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  white-space: nowrap;
-  user-select: none;
-  box-shadow: 0 2px 4px rgba(40, 116, 166, 0.4);
-  transition: background-color 0.3s ease;
-}
-.addToDevisBtn:hover,
-.removeArticleBtn:hover {
-  background: #1b3b5a;
-}
-#devisContainer {
-  flex-grow: 1;
-  background: var(--bg-color);
-  border-radius: var(--radius);
-  max-width: 800px;
-  width: 100%;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  box-sizing: border-box;
-  color: var(--text-color);
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: break-word;
-  user-select: text;
-}
-#devisHeader {
-  margin-bottom: 20px;
-  line-height: 1.3;
-  font-weight: 600;
-  color: var(--text-color);
-  user-select: text;
-}
-#devisHeader h2 {
-  margin: 0 0 12px 0;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--primary-color);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  user-select: none;
-}
-#devisHeader #topLine {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  font-size: 0.9rem;
-}
-#devisHeader #companyInfo,
-#devisHeader #clientInfo {
-  font-weight: 400;
-  font-size: 0.85rem;
-  color: var(--text-light);
-  line-height: 1.3;
-}
-#devisHeader #clientInfo {
-  text-align: right;
-}
-#devisBody {
-  padding: 0;
-  margin: 0;
-  overflow-x: auto;
-  background: white;
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
-}
-#devisBody table {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border-collapse: collapse;
-  font-size: 10px;
-  background: white;
-  table-layout: fixed;
-}
-#devisBody table thead th {
-  background-color: #2c5c85;
-  color: white;
-  padding: 8px 10px;
-  font-weight: 700;
-  border: none;
-  text-align: left;
-  white-space: nowrap;
-}
-/* Largeur et cadrage spécifique pour chaque colonne */
-#devisBody table thead th:nth-child(1) { width: 8%; }
-#devisBody table thead th:nth-child(2),
-#devisBody table tbody td:nth-child(2) {
-  width: 44%;
-  font-size: 11px; /* taille diminuée de 2px */
-}
-#devisBody table thead th:nth-child(3) { width: 10%; }
-#devisBody table thead th:nth-child(4) { width: 14%; }
-#devisBody table thead th:nth-child(5) { width: 8%; }
-/* Colonne Montant net HT renommée MNet HT */
-#devisBody table thead th:nth-child(6),
-#devisBody table tbody td:nth-child(6) {
-  width: 10%;
-  min-width: 80px;
-  padding-right: 10px;
-  text-align: right;
-  white-space: nowrap;
-}
-#devisBody table thead th:nth-child(7) { width: 6%; }
-#devisBody table tbody tr {
-  border-bottom: 1px solid black;
-}
-#devisBody table tbody td {
-  border: none;
-  padding: 6px 8px;
-  vertical-align: middle;
-  word-break: break-word;
-}
-#devisBody table tbody td:nth-child(3),
-#devisBody table tbody td:nth-child(4),
-#devisBody table tbody td:nth-child(5),
-#devisBody table tbody td:nth-child(6) {
-  text-align: right;
-}
-#devisBody table tbody td:nth-child(7) {
-  text-align: center;
-  padding: 0;
-}
-#devisBody table input[type="number"] {
-  font-size: 10px;
-  padding: 2px 6px;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Cacher les spans d'impression par défaut */
-.printOnly {
-  display: none;
-}
-
-/* En mode impression (printMode), masquer inputs et afficher les spans */
-.printMode input {
-  display: none !important;
-}
-.printMode .printOnly {
-  display: inline !important;
-}
-
-#totalsTable {
-  margin-top: 10px;
-  font-size: 11px;
-}
-#totalsTable thead th {
-  text-align: right;
-  padding: 4px 6px;
-  border-bottom: 1.5px solid var(--primary-color);
-}
-#devisFooter {
-  margin-top: 25px;
-  font-size: 0.8rem;
-  color: var(--text-light);
-  line-height: 1.4;
-  user-select: text;
-  white-space: pre-line;
-}
-.printMode tbody td:nth-child(7),
-.printMode thead th:nth-child(7) {
-  display: none !important;
-}
-.printMode tbody td:nth-child(3) span.qtyText {
-  display: inline !important;
-}
-@media (max-width: 960px) {
-  #container {
-    flex-direction: column;
-    max-width: 95%;
+  :root {
+    --primary-color: #1e4f7a;
+    --secondary-color: #2874a6;
+    --bg-color: #fff;
+    --text-color: #222;
+    --text-light: #555;
+    --border-color: #cfdde9;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-base: 11px;
+    --font-weight-normal: 400;
+    --font-weight-bold: 600;
+    --radius: 4px;
   }
-  #configPanel {
-    width: 100%;
-    max-height: none;
-    margin-bottom: 25px;
-  }
-  #devisContainer {
-    width: 100%;
-    max-height: none;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-}
-@media print {
   body {
-    background: white;
-    color: black;
-    font-size: 10pt;
+    font-family: var(--font-family);
+    background: #f4f7fa;
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    user-select: none;
   }
   #container {
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
+    display: flex;
+    width: 100%;
+    max-width: 1150px;
+    margin: 20px auto;
+    gap: 15px;
+    box-sizing: border-box;
+    padding: 0 10px;
   }
   #configPanel {
-    display: none;
+    flex: 0 0 350px;
+    background: var(--bg-color);
+    border-radius: var(--radius);
+    padding: 15px 18px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    max-height: 90vh;
+    border: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    user-select: text;
+  }
+  #configPanel h2 {
+    color: var(--secondary-color);
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 2.5px solid var(--secondary-color);
+    padding-bottom: 6px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 20px;
+    transition: color 0.3s ease;
+  }
+  #configPanel section.collapsed h2 {
+    color: var(--text-light);
+  }
+  #configPanel section h2::after {
+    content: "▼";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    transition: transform 0.3s ease, content 0.3s ease;
+    color: var(--secondary-color);
+  }
+  #configPanel section.collapsed h2::after {
+    transform: translateY(-50%) rotate(-90deg);
+    content: "▶";
+    color: var(--text-light);
+  }
+  #configPanel section {
+    margin-bottom: 20px;
+    transition: margin-bottom 0.3s ease;
+  }
+  #configPanel section.collapsed {
+    margin-bottom: 0 !important;
+  }
+  #configPanel section.collapsed > *:not(h2) {
+    display: none !important;
+    pointer-events: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #configPanel label {
+    display: block;
+    margin-top: 8px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-light);
+    cursor: pointer;
+  }
+  #configPanel input[type="text"],
+  #configPanel input[type="email"],
+  #configPanel input[type="date"],
+  #configPanel input[type="number"],
+  #configPanel textarea,
+  #configPanel select {
+    width: 100%;
+    padding: 5px 9px;
+    margin-top: 3px;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-normal);
+    border: 1.4px solid var(--border-color);
+    border-radius: var(--radius);
+    box-sizing: border-box;
+    resize: vertical;
+    background: #fafafa;
+    color: var(--text-color);
+    transition: border-color 0.25s ease, background-color 0.25s ease;
+  }
+  #configPanel input[type="text"]:focus,
+  #configPanel input[type="email"]:focus,
+  #configPanel input[type="date"]:focus,
+  #configPanel input[type="number"]:focus,
+  #configPanel textarea:focus,
+  #configPanel select:focus {
+    border-color: var(--secondary-color);
+    background: #fff;
+    outline: none;
+  }
+  #configPanel textarea {
+    min-height: 60px;
+    line-height: 1.3;
+    font-family: var(--font-family);
+  }
+  #configPanel button {
+    margin-top: 12px;
+    padding: 7px 14px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: var(--font-weight-bold);
+    font-size: 0.9rem;
+    user-select: none;
+    box-shadow: 0 2px 5px rgba(40, 116, 166, 0.4);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  #configPanel button:hover,
+  #configPanel button:focus {
+    background: #1b3b5a;
+  }
+  #articlesList {
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    background: #fafafa;
+    padding: 7px 8px;
+    border-radius: var(--radius);
+    color: var(--text-color);
+    font-size: 0.85rem;
+  }
+  .articleItem {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .articleItem input[type="text"],
+  .articleItem input[type="number"] {
+    font-size: 0.85rem;
+    padding: 4px 7px;
+    border: 1.4px solid var(--border-color);
+    border-radius: 3px;
+    background: #fff;
+    transition: border-color 0.25s ease;
+  }
+  .articleItem input[type="text"]:focus,
+  .articleItem input[type="number"]:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+  }
+  .descInput {
+    flex-grow: 1;
+  }
+  .priceInput {
+    width: 65px;
+    text-align: right;
+  }
+  .tvaInput {
+    width: 50px;
+    text-align: right;
+  }
+  .addToDevisBtn,
+  .removeArticleBtn {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(40, 116, 166, 0.4);
+    transition: background-color 0.3s ease;
+  }
+  .addToDevisBtn:hover,
+  .removeArticleBtn:hover {
+    background: #1b3b5a;
   }
   #devisContainer {
-    box-shadow: none;
-    max-width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    flex-grow: 0;
+    width: 800px;
+    max-width: 800px;
+    min-width: 800px;
+    background: var(--bg-color);
+    border-radius: var(--radius);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    padding: 20px;
+    box-sizing: border-box;
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    overflow-y: auto;
+    user-select: text;
+    max-height: 80vh;
+  }
+  #devisHeader {
+    margin-bottom: 20px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: var(--text-color);
+    user-select: text;
+  }
+  #devisHeader h2 {
+    margin: 0 0 12px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+  #devisHeader #topLine {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+  #devisHeader #companyInfo,
+  #devisHeader #clientInfo {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.3;
+  }
+  #devisHeader #companyInfo p,
+  #devisHeader #clientInfo p {
+    margin: 0 0 4px 0;
+  }
+  #devisHeader #clientInfo {
+    text-align: right;
+  }
+  #devisBody {
+    padding: 0;
+    margin: 0;
+    overflow-x: auto;
+    background: white;
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
   }
   #devisBody table {
-    display: table !important;
-    overflow: visible !important;
-    max-height: none !important;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    font-size: 10px;
+    background: white;
+    table-layout: fixed;
   }
-}
+  #devisBody table thead th {
+    background-color: #2c5c85;
+    color: white;
+    padding: 8px 10px;
+    font-weight: 700;
+    border: none;
+    text-align: left;
+    white-space: nowrap;
+  }
+  #devisBody table thead th:nth-child(1) { width: 8%; }
+  #devisBody table thead th:nth-child(2),
+  #devisBody table tbody td:nth-child(2) {
+    width: 44%;
+    font-size: 11px;
+  }
+  #devisBody table thead th:nth-child(3) { width: 10%; }
+  #devisBody table thead th:nth-child(4) { width: 14%; }
+  #devisBody table thead th:nth-child(5) { width: 8%; }
+  #devisBody table thead th:nth-child(6),
+  #devisBody table tbody td:nth-child(6) {
+    width: 10%;
+    min-width: 80px;
+    padding-right: 10px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  #devisBody table thead th:nth-child(7) { width: 6%; }
+  #devisBody table tbody tr {
+    border-bottom: 1px solid black;
+  }
+  #devisBody table tbody td {
+    border: none;
+    padding: 6px 8px;
+    vertical-align: middle;
+    word-break: break-word;
+  }
+  #devisBody table tbody td:nth-child(3),
+  #devisBody table tbody td:nth-child(4),
+  #devisBody table tbody td:nth-child(5),
+  #devisBody table tbody td:nth-child(6) {
+    text-align: right;
+  }
+  #devisBody table tbody td:nth-child(7) {
+    text-align: center;
+    padding: 0;
+  }
+  #devisBody table input[type="number"] {
+    font-size: 10px;
+    padding: 2px 6px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .printOnly {
+    display: none;
+  }
+  /* Quand on est en mode export/impression */
+  .printMode input {
+    display: none !important;
+  }
+  .printMode .printOnly {
+    display: inline !important;
+  }
+  .printMode tbody td:nth-child(7),
+  .printMode thead th:nth-child(7) {
+    display: none !important;
+  }
+  #totalsTable {
+    margin-top: 20px;
+    font-size: 11px;
+  }
+  #totalsTable thead th {
+    text-align: right;
+    padding: 4px 6px;
+    border-bottom: 1.5px solid var(--primary-color);
+  }
+  #devisFooter {
+    margin-top: 25px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    user-select: text;
+    white-space: pre-line;
+  }
+  @media (max-width: 960px) {
+    #container {
+      flex-direction: column;
+      max-width: 95%;
+    }
+    #configPanel {
+      width: 100%;
+      max-height: none;
+      margin-bottom: 25px;
+    }
+  }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="container">
   <aside id="configPanel" aria-label="Configuration complète du devis">
+    <!-- ... même contenu configPanel que précédemment ... -->
     <section id="sectionHeader" class="collapsed">
       <h2>Entête du devis</h2>
       <label for="devisTitle">Titre du document</label>
@@ -441,6 +408,7 @@ body {
       <label for="companyTva">TVA Intracom</label>
       <input type="text" id="companyTva" value="FR12345678901" />
     </section>
+    <!-- ... autres sections inchangées ... -->
     <section id="sectionClient" class="collapsed">
       <h2>Informations client</h2>
       <label for="clientLastName">Nom</label>
@@ -463,6 +431,23 @@ body {
       <textarea id="thankYouMsg" rows="4" style="width: 100%; padding:8px; font-size:14px; border-radius:4px;">Merci pour votre confiance.
 Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     </section>
+    <section id="sectionOptionsAffichage" class="collapsed">
+      <h2>Options d'affichage</h2>
+      <label><input type="checkbox" id="showDevisTitle" checked /> Afficher le titre du devis</label>
+      <label><input type="checkbox" id="showCompanyName" checked /> Afficher le nom de l'entreprise</label>
+      <label><input type="checkbox" id="showCompanyAddress" checked /> Afficher l'adresse de l'entreprise</label>
+      <label><input type="checkbox" id="showCompanyPhone" checked /> Afficher le téléphone de l'entreprise</label>
+      <label><input type="checkbox" id="showCompanyEmail" checked /> Afficher l'email de l'entreprise</label>
+      <label><input type="checkbox" id="showCompanySiret" checked /> Afficher le SIRET</label>
+      <label><input type="checkbox" id="showCompanyTva" checked /> Afficher la TVA intracom</label>
+      <hr>
+      <label><input type="checkbox" id="showClientName" checked /> Afficher le nom complet du client</label>
+      <label><input type="checkbox" id="showClientAddress" checked /> Afficher l'adresse client</label>
+      <label><input type="checkbox" id="showClientPostalCity" checked /> Afficher code postal et ville client</label>
+      <label><input type="checkbox" id="showClientEmail" checked /> Afficher l'email client</label>
+      <label><input type="checkbox" id="showClientPhone" checked /> Afficher le téléphone client</label>
+      <label><input type="checkbox" id="showDate" checked /> Afficher la date</label>
+    </section>
     <section id="sectionArticles" class="collapsed">
       <h2>Articles disponibles</h2>
       <div id="articlesList" aria-label="Liste des articles disponibles"></div>
@@ -482,37 +467,36 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       <div style="display:flex; gap:8px; flex-wrap: wrap;">
         <button id="btnExportTxt" style="flex-grow:1;">Exporter config en TXT</button>
         <input type="file" id="fileImportTxt" accept=".txt,text/plain" style="flex-grow:1;" />
+        <button id="btnExportPDF" style="flex-grow:1;">Exporter en PDF</button>
       </div>
     </section>
   </aside>
+
   <main id="devisContainer" role="main" aria-label="Feuille de devis éditable">
     <div id="devisHeader" contenteditable="true" aria-label="En-tête du devis" spellcheck="false">
-      <h2>DEVIS A EFFECTUER SUR PC J'AI PAS ENCORE TROUVE POUR TELEPHONE</h2>
+      <h2>DEVIS</h2>
       <div id="topLine">
         <strong id="companyNameDisplay">Mon Entreprise SARL</strong>
         <span id="clientFullNameDisplay"></span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:6px;">
         <div id="companyInfo" style="max-width:48%;">
-          <p style="margin:0;">
-            <span id="companyAddressDisplay">123 Rue Exemple, 75000 Paris</span><br />
-            <span id="companyPhoneDisplay">Tél : 01 23 45 67 89</span><br />
-            <span id="companyEmailDisplay">Email : contact@monentreprise.fr</span><br />
-            <span id="companySiretDisplay">SIRET : 123 456 789 00012</span><br />
-            <span id="companyTvaDisplay">TVA Intracom : FR12345678901</span>
-          </p>
+          <p><span id="companyAddressDisplay">123 Rue de l'Exemple, 75000 Paris</span></p>
+          <p><span id="companyPhoneDisplay">Tél : 01 23 45 67 89</span></p>
+          <p><span id="companyEmailDisplay">Email : contact@monentreprise.fr</span></p>
+          <p><span id="companySiretDisplay">SIRET : 123 456 789 00012</span></p>
+          <p><span id="companyTvaDisplay">TVA Intracom : FR12345678901</span></p>
         </div>
         <div id="clientInfo" style="max-width:48%; text-align:right;">
-          <p style="margin:0;">
-            <span id="clientAddressDisplay"></span><br />
-            <span id="clientPostalCityDisplay"></span><br />
-            <span id="clientEmailDisplay"></span><br />
-            <span id="clientPhoneDisplay"></span><br />
-            <span id="dateDisplay">Date :</span>
-          </p>
+          <p><span id="clientAddressDisplay"></span></p>
+          <p><span id="clientPostalCityDisplay"></span></p>
+          <p><span id="clientEmailDisplay"></span></p>
+          <p><span id="clientPhoneDisplay"></span></p>
+          <p><span id="dateDisplay"></span></p>
         </div>
       </div>
     </div>
+
     <div id="devisBody" contenteditable="false" aria-label="Tableau des articles du devis" spellcheck="false">
       <table>
         <thead>
@@ -523,12 +507,13 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
             <th>Prix UT (€)</th>
             <th>Rem.%</th>
             <th>MNet HT</th>
-            <th></th>
+            <th></th> <!-- colonne croix rouge -->
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
+
     <div id="totalsTable" style="margin-top: 20px;">
       <table>
         <thead>
@@ -547,14 +532,15 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         </tbody>
       </table>
     </div>
+
     <div id="devisFooter" contenteditable="true" aria-label="Message de fin de devis" spellcheck="false" style="margin-top:25px; font-size:0.8rem; color: var(--text-light); line-height:1.4; white-space: pre-line;">
       Merci pour votre confiance.<br />Ce devis est valable 30 jours à partir de la date d'émission.
     </div>
   </main>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
+  // Variables DOM
   const devisTitleInput = document.getElementById('devisTitle');
   const companyNameInput = document.getElementById('companyName');
   const companyAddressInput = document.getElementById('companyAddress');
@@ -576,49 +562,136 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
   const newDescInput = document.getElementById('newDesc');
   const newPriceInput = document.getElementById('newPrice');
   const newTvaInput = document.getElementById('newTva');
-  const body = document.getElementById('devisBody');
-  const tbody = body.querySelector('tbody');
+  const tbody = document.querySelector('#devisBody tbody');
   const btnExportTxt = document.getElementById('btnExportTxt');
   const fileImportTxt = document.getElementById('fileImportTxt');
+  const btnExportPDF = document.getElementById('btnExportPDF');
+
+  const displayOptionsCheckboxes = {
+    showDevisTitle: document.getElementById('showDevisTitle'),
+    showCompanyName: document.getElementById('showCompanyName'),
+    showCompanyAddress: document.getElementById('showCompanyAddress'),
+    showCompanyPhone: document.getElementById('showCompanyPhone'),
+    showCompanyEmail: document.getElementById('showCompanyEmail'),
+    showCompanySiret: document.getElementById('showCompanySiret'),
+    showCompanyTva: document.getElementById('showCompanyTva'),
+    showClientName: document.getElementById('showClientName'),
+    showClientAddress: document.getElementById('showClientAddress'),
+    showClientPostalCity: document.getElementById('showClientPostalCity'),
+    showClientEmail: document.getElementById('showClientEmail'),
+    showClientPhone: document.getElementById('showClientPhone'),
+    showDate: document.getElementById('showDate'),
+  };
+
   let articles = [
     { desc: "Consultation", price: 50.00, tva: 20 },
     { desc: "Développement Web", price: 80.00, tva: 20 },
   ];
   let devisItems = [];
+
   function updateDevisHeader() {
-    document.querySelector('#devisHeader h2').textContent = devisTitleInput.value || "DEVIS";
-    document.getElementById('companyNameDisplay').textContent = companyNameInput.value || '';
-    document.getElementById('companyAddressDisplay').textContent = companyAddressInput.value || '';
-    document.getElementById('companyPhoneDisplay').textContent = 'Tél : ' + (companyPhoneInput.value || '');
-    document.getElementById('companyEmailDisplay').textContent = 'Email : ' + (companyEmailInput.value || '');
-    document.getElementById('companySiretDisplay').textContent = 'SIRET : ' + (companySiretInput.value || '');
-    document.getElementById('companyTvaDisplay').textContent = 'TVA Intracom : ' + (companyTvaInput.value || '');
-    const clientFullName = (clientLastNameInput.value + ' ' + clientFirstNameInput.value).trim();
-    document.getElementById('clientFullNameDisplay').textContent = clientFullName;
-    document.getElementById('clientAddressDisplay').textContent = clientAddressInput.value || '';
-    document.getElementById('clientPostalCityDisplay').textContent = (clientPostalCodeInput.value + ' ' + clientCityInput.value).trim();
-    document.getElementById('clientEmailDisplay').textContent = clientEmailInput.value || '';
-    document.getElementById('clientPhoneDisplay').textContent = clientPhoneInput.value || '';
-    document.getElementById('dateDisplay').textContent = 'Date : ' + (dateInput.value || '');
+    if (displayOptionsCheckboxes.showDevisTitle.checked) {
+      document.querySelector('#devisHeader h2').textContent = devisTitleInput.value || "DEVIS";
+      document.querySelector('#devisHeader h2').style.display = 'block';
+    } else {
+      document.querySelector('#devisHeader h2').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanyName.checked) {
+      document.getElementById('companyNameDisplay').textContent = companyNameInput.value || '';
+      document.getElementById('companyNameDisplay').style.display = 'inline';
+    } else {
+      document.getElementById('companyNameDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanyAddress.checked) {
+      document.getElementById('companyAddressDisplay').textContent = companyAddressInput.value || '';
+      document.getElementById('companyAddressDisplay').style.display = 'block';
+    } else {
+      document.getElementById('companyAddressDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanyPhone.checked) {
+      document.getElementById('companyPhoneDisplay').textContent = 'Tél : ' + (companyPhoneInput.value || '');
+      document.getElementById('companyPhoneDisplay').style.display = 'block';
+    } else {
+      document.getElementById('companyPhoneDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanyEmail.checked) {
+      document.getElementById('companyEmailDisplay').textContent = 'Email : ' + (companyEmailInput.value || '');
+      document.getElementById('companyEmailDisplay').style.display = 'block';
+    } else {
+      document.getElementById('companyEmailDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanySiret.checked) {
+      document.getElementById('companySiretDisplay').textContent = 'SIRET : ' + (companySiretInput.value || '');
+      document.getElementById('companySiretDisplay').style.display = 'block';
+    } else {
+      document.getElementById('companySiretDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showCompanyTva.checked) {
+      document.getElementById('companyTvaDisplay').textContent = 'TVA Intracom : ' + (companyTvaInput.value || '');
+      document.getElementById('companyTvaDisplay').style.display = 'block';
+    } else {
+      document.getElementById('companyTvaDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showClientName.checked) {
+      const clientFullName = (clientLastNameInput.value + ' ' + clientFirstNameInput.value).trim();
+      document.getElementById('clientFullNameDisplay').textContent = clientFullName;
+      document.getElementById('clientFullNameDisplay').style.display = 'inline';
+    } else {
+      document.getElementById('clientFullNameDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showClientAddress.checked) {
+      document.getElementById('clientAddressDisplay').textContent = clientAddressInput.value || '';
+      document.getElementById('clientAddressDisplay').style.display = 'block';
+    } else {
+      document.getElementById('clientAddressDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showClientPostalCity.checked) {
+      document.getElementById('clientPostalCityDisplay').textContent = (clientPostalCodeInput.value + ' ' + clientCityInput.value).trim();
+      document.getElementById('clientPostalCityDisplay').style.display = 'block';
+    } else {
+      document.getElementById('clientPostalCityDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showClientEmail.checked) {
+      document.getElementById('clientEmailDisplay').textContent = clientEmailInput.value || '';
+      document.getElementById('clientEmailDisplay').style.display = 'block';
+    } else {
+      document.getElementById('clientEmailDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showClientPhone.checked) {
+      document.getElementById('clientPhoneDisplay').textContent = clientPhoneInput.value || '';
+      document.getElementById('clientPhoneDisplay').style.display = 'block';
+    } else {
+      document.getElementById('clientPhoneDisplay').style.display = 'none';
+    }
+    if (displayOptionsCheckboxes.showDate.checked) {
+      document.getElementById('dateDisplay').textContent = 'Date : ' + (dateInput.value || '');
+      document.getElementById('dateDisplay').style.display = 'block';
+    } else {
+      document.getElementById('dateDisplay').style.display = 'none';
+    }
   }
+
   function updateDevisFooter() {
     const footer = document.getElementById('devisFooter');
     footer.innerHTML = thankYouMsgInput.value || "Merci pour votre confiance.\nCe devis est valable 30 jours à partir de la date d'émission.";
   }
+
   function renderArticles() {
     articlesList.innerHTML = '';
     articles.forEach((art, i) => {
       const div = document.createElement('div');
       div.className = 'articleItem';
+
       const descInput = document.createElement('input');
       descInput.type = 'text';
       descInput.value = art.desc;
       descInput.className = 'descInput';
       descInput.placeholder = "Description";
-      descInput.addEventListener('input', () => { 
+      descInput.addEventListener('input', () => {
         articles[i].desc = descInput.value;
         saveData();
       });
+
       const priceInput = document.createElement('input');
       priceInput.type = 'number';
       priceInput.min = 0;
@@ -630,6 +703,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         articles[i].price = isNaN(val) ? 0 : val;
         saveData();
       });
+
       const tvaInput = document.createElement('input');
       tvaInput.type = 'number';
       tvaInput.min = 0;
@@ -643,6 +717,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         articles[i].tva = isNaN(val) ? 20 : val;
         saveData();
       });
+
       const addBtn = document.createElement('button');
       addBtn.textContent = 'Ajouter';
       addBtn.className = 'addToDevisBtn';
@@ -651,6 +726,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         addItemToDevis(1, art.price, art.tva, art.desc);
         saveData();
       });
+
       const removeBtn = document.createElement('button');
       removeBtn.textContent = 'Supprimer';
       removeBtn.className = 'removeArticleBtn';
@@ -663,6 +739,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
           saveData();
         }
       });
+
       div.appendChild(descInput);
       div.appendChild(priceInput);
       div.appendChild(tvaInput);
@@ -671,6 +748,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       articlesList.appendChild(div);
     });
   }
+
   function addItemToDevis(qty, price, tva, desc) {
     const existing = devisItems.find(item => item.desc === desc);
     if (existing) {
@@ -682,34 +760,38 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     updateDevisTable();
     saveData();
   }
+
   function updateDevisTable() {
     tbody.innerHTML = '';
     let totalHT = 0;
     let totalTVA = 0;
     devisItems.forEach((item, index) => {
       const tr = document.createElement('tr');
-      
-      // Référence
+
+      // Réf.
       const tdRef = document.createElement('td');
       tdRef.textContent = item.reference || '';
       tr.appendChild(tdRef);
-      
+
       // Description
       const tdDesc = document.createElement('td');
       tdDesc.textContent = item.desc;
       tr.appendChild(tdDesc);
-      
-      // Qté/Tps
+
+      // Qté/Tps avec input + span pour export
       const tdQty = document.createElement('td');
       tdQty.style.textAlign = 'right';
+
       const qtyInput = document.createElement('input');
       qtyInput.type = 'number';
       qtyInput.min = 0;
       qtyInput.value = item.qty;
       qtyInput.style.width = '60px';
+
       const qtySpan = document.createElement('span');
       qtySpan.textContent = item.qty;
       qtySpan.className = 'printOnly';
+
       qtyInput.addEventListener('change', () => {
         let val = parseInt(qtyInput.value);
         if (isNaN(val) || val < 0) val = 0;
@@ -721,19 +803,21 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         updateDevisTable();
         saveData();
       });
+
       tdQty.appendChild(qtyInput);
       tdQty.appendChild(qtySpan);
       tr.appendChild(tdQty);
-      
+
       // Prix UT
       const tdPrice = document.createElement('td');
       tdPrice.textContent = item.price.toFixed(2);
       tdPrice.style.textAlign = 'right';
       tr.appendChild(tdPrice);
-      
-      // Remise
+
+      // Remise avec input + span pour export
       const tdRem = document.createElement('td');
       tdRem.style.textAlign = 'right';
+
       const remInput = document.createElement('input');
       remInput.type = 'number';
       remInput.min = 0;
@@ -741,9 +825,11 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       remInput.step = 0.01;
       remInput.value = item.remise !== undefined ? item.remise : 0;
       remInput.style.width = '50px';
+
       const remSpan = document.createElement('span');
       remSpan.textContent = remInput.value;
       remSpan.className = 'printOnly';
+
       remInput.addEventListener('change', () => {
         let val = parseFloat(remInput.value);
         if (isNaN(val) || val < 0) val = 0;
@@ -752,20 +838,22 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         updateDevisTable();
         saveData();
       });
+
       tdRem.appendChild(remInput);
       tdRem.appendChild(remSpan);
       tr.appendChild(tdRem);
-      
-      // Montant net HT
+
+      // MNet HT
       const netHT = item.qty * item.price * (1 - (item.remise || 0) / 100);
       const tdNetHT = document.createElement('td');
       tdNetHT.textContent = netHT.toFixed(2);
       tdNetHT.style.textAlign = 'right';
       tr.appendChild(tdNetHT);
-      
-      // Supprimer (diminue à l’unité)
+
+      // Colonne croix rouge (bouton supprimer)
       const tdRemove = document.createElement('td');
       tdRemove.style.textAlign = 'center';
+
       const removeBtn = document.createElement('button');
       removeBtn.textContent = '✖';
       removeBtn.title = 'Supprimer une unité de cet article';
@@ -776,6 +864,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       removeBtn.style.background = 'transparent';
       removeBtn.style.border = 'none';
       removeBtn.style.color = 'red';
+
       removeBtn.addEventListener('click', () => {
         if (devisItems[index].qty > 1) {
           devisItems[index].qty -= 1;
@@ -785,11 +874,12 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         updateDevisTable();
         saveData();
       });
+
       tdRemove.appendChild(removeBtn);
       tr.appendChild(tdRemove);
-      
+
       tbody.appendChild(tr);
-      
+
       totalHT += netHT;
       totalTVA += netHT * (item.tva / 100);
     });
@@ -798,6 +888,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     document.getElementById('totalTVAValue').textContent = totalTVA.toFixed(2) + ' €';
     document.getElementById('totalTTCValue').textContent = totalTTC.toFixed(2) + ' €';
   }
+
   addArticleForm.addEventListener('submit', e => {
     e.preventDefault();
     const desc = newDescInput.value.trim();
@@ -817,6 +908,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     newTvaInput.value = "20";
     saveData();
   });
+
   function saveData() {
     const data = {
       headerForm: {
@@ -839,16 +931,30 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         date: dateInput.value,
         thankYouMsg: thankYouMsgInput.value,
       },
+      displayOptions: {
+        showDevisTitle: displayOptionsCheckboxes.showDevisTitle.checked,
+        showCompanyName: displayOptionsCheckboxes.showCompanyName.checked,
+        showCompanyAddress: displayOptionsCheckboxes.showCompanyAddress.checked,
+        showCompanyPhone: displayOptionsCheckboxes.showCompanyPhone.checked,
+        showCompanyEmail: displayOptionsCheckboxes.showCompanyEmail.checked,
+        showCompanySiret: displayOptionsCheckboxes.showCompanySiret.checked,
+        showCompanyTva: displayOptionsCheckboxes.showCompanyTva.checked,
+        showClientName: displayOptionsCheckboxes.showClientName.checked,
+        showClientAddress: displayOptionsCheckboxes.showClientAddress.checked,
+        showClientPostalCity: displayOptionsCheckboxes.showClientPostalCity.checked,
+        showClientEmail: displayOptionsCheckboxes.showClientEmail.checked,
+        showClientPhone: displayOptionsCheckboxes.showClientPhone.checked,
+        showDate: displayOptionsCheckboxes.showDate.checked,
+      },
       articles,
       devisItems,
     };
     localStorage.setItem('devisData', JSON.stringify(data));
   }
+
   function restoreData() {
     const str = localStorage.getItem('devisData');
-    if (!str) {
-      return;
-    }
+    if (!str) return;
     try {
       const data = JSON.parse(str);
       Object.entries(data.headerForm).forEach(([k, v]) => {
@@ -859,6 +965,12 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         const el = document.getElementById(k);
         if (el) el.value = v;
       });
+      if (data.displayOptions) {
+        Object.entries(data.displayOptions).forEach(([k, v]) => {
+          const el = document.getElementById(k);
+          if (el && typeof v === 'boolean') el.checked = v;
+        });
+      }
       if (Array.isArray(data.articles)) articles = data.articles;
       if (Array.isArray(data.devisItems)) devisItems = data.devisItems;
       renderArticles();
@@ -869,6 +981,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       console.error('Erreur restauration données :', e);
     }
   }
+
   [
     devisTitleInput, companyNameInput, companyAddressInput, companyPhoneInput, companyEmailInput,
     companySiretInput, companyTvaInput, clientLastNameInput, clientFirstNameInput, clientAddressInput,
@@ -879,156 +992,191 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       saveData();
     });
   });
+
   thankYouMsgInput.addEventListener('input', () => {
     updateDevisFooter();
     saveData();
   });
-  document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.key.toLowerCase() === 's') {
-      e.preventDefault();
+
+  Object.values(displayOptionsCheckboxes).forEach(cb => {
+    cb.addEventListener('change', () => {
+      updateDevisHeader();
       saveData();
-      alert('Données sauvegardées localement.');
-    }
-  });
-  function getPanelDataAsText() {
-    const data = {
-      devisTitle: devisTitleInput.value,
-      companyName: companyNameInput.value,
-      companyAddress: companyAddressInput.value,
-      companyPhone: companyPhoneInput.value,
-      companyEmail: companyEmailInput.value,
-      companySiret: companySiretInput.value,
-      companyTva: companyTvaInput.value,
-      clientLastName: clientLastNameInput.value,
-      clientFirstName: clientFirstNameInput.value,
-      clientAddress: clientAddressInput.value,
-      clientPostalCode: clientPostalCodeInput.value,
-      clientCity: clientCityInput.value,
-      clientEmail: clientEmailInput.value,
-      clientPhone: clientPhoneInput.value,
-      date: dateInput.value,
-      thankYouMsg: thankYouMsgInput.value,
-    };
-    let lines = [];
-    for (const [key, value] of Object.entries(data)) {
-      lines.push(`${key}=${encodeURIComponent(value)}`);
-    }
-    if (articles && Array.isArray(articles)) {
-      const jsonStr = JSON.stringify(articles);
-      const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-      lines.push(`articles=${encoded}`);
-    }
-    return lines.join('\n');
-  }
-  function applyPanelDataFromText(text) {
-    const lines = text.split('\n');
-    lines.forEach(line => {
-      const [key, encodedValue] = line.split('=');
-      if (!key) return;
-      const value = decodeURIComponent(encodedValue || '');
-      if (key === 'articles') {
-        try {
-          const jsonStr = decodeURIComponent(escape(atob(value)));
-          const importedArticles = JSON.parse(jsonStr);
-          if (Array.isArray(importedArticles)) {
-            articles = importedArticles;
-            renderArticles();
-            updateDevisTable();
-          }
-        } catch (e) {
-          console.warn('Erreur import articles:', e);
-        }
-      } else {
-        const el = document.getElementById(key);
-        if (el) {
-          el.value = value;
-          el.dispatchEvent(new Event('input'));
-        }
-      }
     });
-  }
-  function exportPanelToTxt() {
-    const text = getPanelDataAsText();
-    const blob = new Blob([text], { type: 'text/plain' });
+  });
+
+  btnExportTxt.addEventListener('click', () => {
+    const data = {
+      headerForm: {
+        devisTitle: devisTitleInput.value,
+        companyName: companyNameInput.value,
+        companyAddress: companyAddressInput.value,
+        companyPhone: companyPhoneInput.value,
+        companyEmail: companyEmailInput.value,
+        companySiret: companySiretInput.value,
+        companyTva: companyTvaInput.value,
+      },
+      clientForm: {
+        clientLastName: clientLastNameInput.value,
+        clientFirstName: clientFirstNameInput.value,
+        clientAddress: clientAddressInput.value,
+        clientPostalCode: clientPostalCodeInput.value,
+        clientCity: clientCityInput.value,
+        clientEmail: clientEmailInput.value,
+        clientPhone: clientPhoneInput.value,
+        date: dateInput.value,
+        thankYouMsg: thankYouMsgInput.value,
+      },
+      displayOptions: {
+        showDevisTitle: displayOptionsCheckboxes.showDevisTitle.checked,
+        showCompanyName: displayOptionsCheckboxes.showCompanyName.checked,
+        showCompanyAddress: displayOptionsCheckboxes.showCompanyAddress.checked,
+        showCompanyPhone: displayOptionsCheckboxes.showCompanyPhone.checked,
+        showCompanyEmail: displayOptionsCheckboxes.showCompanyEmail.checked,
+        showCompanySiret: displayOptionsCheckboxes.showCompanySiret.checked,
+        showCompanyTva: displayOptionsCheckboxes.showCompanyTva.checked,
+        showClientName: displayOptionsCheckboxes.showClientName.checked,
+        showClientAddress: displayOptionsCheckboxes.showClientAddress.checked,
+        showClientPostalCity: displayOptionsCheckboxes.showClientPostalCity.checked,
+        showClientEmail: displayOptionsCheckboxes.showClientEmail.checked,
+        showClientPhone: displayOptionsCheckboxes.showClientPhone.checked,
+        showDate: displayOptionsCheckboxes.showDate.checked,
+      },
+      articles,
+      devisItems,
+    };
+    const text = JSON.stringify(data, null, 2);
+    const blob = new Blob([text], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'panel_data.txt';
-    document.body.appendChild(a);
+    a.download = 'devis_config.json';
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }
-  function importPanelFromFile(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      applyPanelDataFromText(e.target.result);
-    };
-    reader.readAsText(file);
-  }
-  btnExportTxt.addEventListener('click', exportPanelToTxt);
+  });
+
   fileImportTxt.addEventListener('change', () => {
     if (fileImportTxt.files.length > 0) {
-      importPanelFromFile(fileImportTxt.files[0]);
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (data.headerForm) {
+            Object.entries(data.headerForm).forEach(([k, v]) => {
+              const el = document.getElementById(k);
+              if (el) el.value = v;
+            });
+          }
+          if (data.clientForm) {
+            Object.entries(data.clientForm).forEach(([k, v]) => {
+              const el = document.getElementById(k);
+              if (el) el.value = v;
+            });
+          }
+          if (data.displayOptions) {
+            Object.entries(data.displayOptions).forEach(([k, v]) => {
+              const el = document.getElementById(k);
+              if (el && typeof v === 'boolean') el.checked = v;
+            });
+          }
+          if (Array.isArray(data.articles)) articles = data.articles;
+          if (Array.isArray(data.devisItems)) devisItems = data.devisItems;
+          renderArticles();
+          updateDevisTable();
+          updateDevisHeader();
+          updateDevisFooter();
+          saveData();
+        } catch (error) {
+          alert('Erreur lors de l\'importation du fichier.');
+          console.error(error);
+        }
+      };
+      reader.readAsText(fileImportTxt.files[0]);
       fileImportTxt.value = '';
     }
   });
-  function setupButtons() {
-    const configPanel = document.getElementById('configPanel');
-    if (document.getElementById('exportPdfBtn')) return;
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.style.display = 'flex';
-    buttonsContainer.style.flexDirection = 'column';
-    buttonsContainer.style.gap = '8px';
-    buttonsContainer.style.marginTop = '12px';
-    const exportPdfBtn = document.createElement('button');
-    exportPdfBtn.id = 'exportPdfBtn';
-    exportPdfBtn.textContent = 'Exporter en PDF';
-    exportPdfBtn.style.padding = '8px 14px';
-    exportPdfBtn.style.backgroundColor = 'var(--secondary-color)';
-    exportPdfBtn.style.color = 'white';
-    exportPdfBtn.style.border = 'none';
-    exportPdfBtn.style.borderRadius = '4px';
-    exportPdfBtn.style.cursor = 'pointer';
-    exportPdfBtn.title = 'Exporter le devis en PDF';
-    exportPdfBtn.addEventListener('click', () => {
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'pt', 'a4');
-      const devisElement = document.getElementById('devisContainer');
-      devisElement.classList.add('printMode');
-      updateDevisTable();
+
+  // Export PDF exact visuel via html2canvas + jsPDF
+  btnExportPDF.addEventListener('click', () => {
+    const devisElement = document.getElementById('devisContainer');
+
+    // Ajoute la classe printMode pour cacher inputs, afficher spans, masquer croix rouge
+    devisElement.classList.add('printMode');
+
+    function saveStyles(el, props) {
+      const styles = {};
+      props.forEach(p => { styles[p] = el.style[p]; });
+      return styles;
+    }
+    function applyStyles(el, styles) {
+      Object.entries(styles).forEach(([k,v]) => { el.style[k] = v; });
+    }
+    const propsToReset = ['height', 'maxHeight', 'overflow'];
+
+    const elementsToExpand = [];
+    let el = devisElement;
+    while(el) {
+      elementsToExpand.push(el);
+      if(el.tagName === 'BODY') break;
+      el = el.parentElement;
+    }
+
+    const savedStyles = elementsToExpand.map(el => ({el, styles: saveStyles(el, propsToReset)}));
+
+    elementsToExpand.forEach(el => {
+      el.style.height = 'auto';
+      el.style.maxHeight = 'none';
+      el.style.overflow = 'visible';
+    });
+
+    setTimeout(() => {
       html2canvas(devisElement, {
         scale: 2,
-        backgroundColor: null,
         useCORS: true,
-        scrollX: 0,
-        scrollY: -window.scrollY,
+        backgroundColor: "#fff",
       }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        savedStyles.forEach(({el, styles}) => applyStyles(el, styles));
 
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('devis.pdf');
+        // Retire la classe printMode après capture
         devisElement.classList.remove('printMode');
-        updateDevisTable();
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        const imgWidth = pdfWidth - 40;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 20;
+
+        pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight + 20;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        pdf.save('devis_exact_complet.pdf');
       }).catch(err => {
-        alert('Erreur lors de la génération du PDF : ' + err.message);
+        savedStyles.forEach(({el, styles}) => applyStyles(el, styles));
         devisElement.classList.remove('printMode');
-        updateDevisTable();
+        alert('Erreur lors de la capture du devis : ' + err);
       });
-    });
-    buttonsContainer.appendChild(exportPdfBtn);
-    configPanel.appendChild(buttonsContainer);
-  }
+    }, 100);
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
     restoreData();
     updateDevisHeader();
     updateDevisFooter();
     renderArticles();
     updateDevisTable();
-    setupButtons();
+
     document.querySelectorAll('#configPanel section h2').forEach(header => {
       header.addEventListener('click', () => {
         header.parentElement.classList.toggle('collapsed');
