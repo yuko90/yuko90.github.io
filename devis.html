@@ -3,20 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Devis avec export PDF - inputs masqués à l’export</title>
-
+<title>Devis complet</title>
 <style>
   :root {
-    --primary-color: #1e4f7a;
+    --primary-color: #15395d;
     --secondary-color: #2874a6;
     --bg-color: #fff;
     --text-color: #222;
     --text-light: #555;
-    --border-color: #cfdde9;
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --font-size-base: 11px;
     --font-weight-normal: 400;
-    --font-weight-bold: 600;
+    --font-weight-bold: 700;
     --radius: 4px;
   }
   body {
@@ -27,14 +25,33 @@
     min-height: 100vh;
     user-select: none;
   }
+#logoContainer {
+margin-right: -50px;
+  /* width: 180px;    largeur fixe, modifie à ta convenance */
+  /* height: 180px;   hauteur fixe */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#logoImage {
+  width: 25vh;
+  height: 14vh;
+  object-fit: contain;
+  user-select: none;
+  display: block;
+}
+
+
   #container {
     display: flex;
     width: 100%;
     max-width: 1150px;
     margin: 20px auto;
     gap: 15px;
-    box-sizing: border-box;
     padding: 0 10px;
+    box-sizing: border-box;
   }
   #configPanel {
     flex: 0 0 350px;
@@ -44,7 +61,7 @@
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     overflow-y: auto;
     max-height: 90vh;
-    border: 1px solid var(--border-color);
+    border: 1px solid #cfdde9;
     font-size: 0.85rem;
     user-select: text;
   }
@@ -114,7 +131,7 @@
     margin-top: 3px;
     font-size: 0.9rem;
     font-weight: var(--font-weight-normal);
-    border: 1.4px solid var(--border-color);
+    border: 1.4px solid #cfdde9;
     border-radius: var(--radius);
     box-sizing: border-box;
     resize: vertical;
@@ -155,222 +172,384 @@
   #configPanel button:focus {
     background: #1b3b5a;
   }
-  #articlesList {
-    max-height: 180px;
-    overflow-y: auto;
-    border: 1px solid var(--border-color);
-    background: #fafafa;
-    padding: 7px 8px;
-    border-radius: var(--radius);
-    color: var(--text-color);
-    font-size: 0.85rem;
-  }
-  .articleItem {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  .articleItem input[type="text"],
-  .articleItem input[type="number"] {
-    font-size: 0.85rem;
-    padding: 4px 7px;
-    border: 1.4px solid var(--border-color);
-    border-radius: 3px;
-    background: #fff;
-    transition: border-color 0.25s ease;
-  }
-  .articleItem input[type="text"]:focus,
-  .articleItem input[type="number"]:focus {
-    border-color: var(--secondary-color);
-    outline: none;
-  }
-  .descInput {
-    flex-grow: 1;
-  }
-  .priceInput {
-    width: 65px;
-    text-align: right;
-  }
-  .tvaInput {
-    width: 50px;
-    text-align: right;
-  }
-  .addToDevisBtn,
-  .removeArticleBtn {
-    background: var(--secondary-color);
-    color: white;
-    border: none;
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    white-space: nowrap;
-    user-select: none;
-    box-shadow: 0 2px 4px rgba(40, 116, 166, 0.4);
-    transition: background-color 0.3s ease;
-  }
-  .addToDevisBtn:hover,
-  .removeArticleBtn:hover {
-    background: #1b3b5a;
-  }
-  #devisContainer {
-    flex-grow: 0;
-    width: 800px;
-    max-width: 800px;
-    min-width: 800px;
-    background: var(--bg-color);
-    border-radius: var(--radius);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    padding: 20px;
-    box-sizing: border-box;
-    color: var(--text-color);
-    font-family: var(--font-family);
-    font-size: var(--font-size-base);
-    display: flex;
-    flex-direction: column;
-    overflow-x: auto;
-    overflow-y: auto;
-    user-select: text;
-    max-height: 80vh;
-  }
+
+#devisContainer {
+  flex-grow: 1;
+  background: var(--bg-color);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  display: flex;
+  flex-direction: column;
+  user-select: text;
+  min-width: 800px;
+  min-height: 600px;
+  overflow: auto; /* Ajoute les barres de défilement si nécessaire */
+  overflow-x: auto; /* Active la barre de défilement horizontale */
+}
+  /* En-tête style demandé */
   #devisHeader {
-    margin-bottom: 20px;
-    line-height: 1.3;
-    font-weight: 600;
-    color: var(--text-color);
-    user-select: text;
-  }
-  #devisHeader h2 {
-    margin: 0 0 12px 0;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--primary-color);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    user-select: none;
-  }
-  #devisHeader #topLine {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    font-size: 0.9rem;
-  }
-  #devisHeader #companyInfo,
-  #devisHeader #clientInfo {
-    font-weight: 400;
-    font-size: 0.85rem;
-    color: var(--text-light);
+    align-items: flex-start;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    font-size: 12px;
+    color: #555;
     line-height: 1.3;
   }
-  #devisHeader #companyInfo p,
+  #headerLeft {
+    max-width: 65%;
+  }
+  #headerLeft h2 {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+  #headerLeft strong {
+    font-weight: var(--font-weight-bold);
+    color: var(--text-color);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  #headerLeft div {
+    margin-bottom: 3px;
+    font-size: 13px;
+    color: var(--text-light);
+  }
+  #headerRight {
+    max-width: 30%;
+    text-align: right;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-color);
+    white-space: nowrap;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  #dateDisplay {
+    white-space: nowrap;
+    margin-bottom: 10px;
+  }
+
+  /* Nouveau : infos client sous la date */
+  #devisHeader #clientInfo {
+    max-width: 100%;
+    margin-top: 0;
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.3;
+    text-align: right;
+    user-select: text;
+  }
+  #devisHeader #clientInfo strong {
+    color: var(--text-color);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+  }
   #devisHeader #clientInfo p {
     margin: 0 0 4px 0;
   }
-  #devisHeader #clientInfo {
-    text-align: right;
+  #devisHeader #clientInfo .clientLabel {
+    font-weight: 600;
+    color: var(--primary-color);
   }
-  #devisBody {
-    padding: 0;
-    margin: 0;
-    overflow-x: auto;
-    background: white;
-    min-height: 50vh;
-    display: flex;
-    flex-direction: column;
+
+  @media (max-width: 600px) {
+   #container {
+    flex-direction: row;
   }
+  #devisContainer {
+    width: auto;
+    min-width: 800px;  /* Conserve la largeur minimale même en petite taille */
+  }
+}
+
+#devisTablesWrapper {
+  border: 2px solid var(--primary-color);
+  border-radius: 6px;
+  overflow-x: auto; /* Permet la barre de défilement horizontale */
+  background: var(--bg-color);
+  max-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+}
+
+#devisBody {
+  padding: 0;
+  margin: 0;
+  overflow-x: auto; /* Permet d'activer la barre de défilement horizontale */
+  background: white;
+  flex-grow: 1;
+  overflow-y: auto; /* Active la barre de défilement verticale si nécessaire */
+}
+
   #devisBody table {
     width: 100%;
-    margin: 0;
-    padding: 0;
     border-collapse: collapse;
-    font-size: 10px;
+    font-size: 12px;
     background: white;
     table-layout: fixed;
   }
   #devisBody table thead th {
-    background-color: #2c5c85;
+    background-color: var(--primary-color);
     color: white;
-    padding: 8px 10px;
     font-weight: 700;
-    border: none;
     text-align: left;
     white-space: nowrap;
+    padding: 6px 10px;
+    border-bottom: none;
   }
-  #devisBody table thead th:nth-child(1) { width: 8%; }
-  #devisBody table thead th:nth-child(2),
-  #devisBody table tbody td:nth-child(2) {
-    width: 44%;
-    font-size: 11px;
-  }
-  #devisBody table thead th:nth-child(3) { width: 10%; }
-  #devisBody table thead th:nth-child(4) { width: 14%; }
-  #devisBody table thead th:nth-child(5) { width: 8%; }
-  #devisBody table thead th:nth-child(6),
-  #devisBody table tbody td:nth-child(6) {
-    width: 10%;
-    min-width: 80px;
-    padding-right: 10px;
-    text-align: right;
-    white-space: nowrap;
-  }
-  #devisBody table thead th:nth-child(7) { width: 6%; }
+
   #devisBody table tbody tr {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--primary-color);
+  }
+  #devisBody table tbody tr:last-child {
+    border-bottom: none;
   }
   #devisBody table tbody td {
-    border: none;
-    padding: 6px 8px;
+    border-bottom: none;
+    padding: 6px 10px;
     vertical-align: middle;
     word-break: break-word;
   }
-  #devisBody table tbody td:nth-child(3),
-  #devisBody table tbody td:nth-child(4),
-  #devisBody table tbody td:nth-child(5),
-  #devisBody table tbody td:nth-child(6) {
+
+  #devisBody table th:first-child,
+  #devisBody table tbody td:first-child {
+    width: 55%;
+    white-space: normal;
+  }
+  #devisBody table th:nth-child(2),
+  #devisBody table tbody td:nth-child(2) {
+    width: 3%;
+  }
+  #devisBody table th:nth-child(3),
+  #devisBody table tbody td:nth-child(3) {
+    width: 3%;
     text-align: right;
   }
-  #devisBody table tbody td:nth-child(7) {
-    text-align: center;
-    padding: 0;
+  #devisBody table th:nth-child(4),
+  #devisBody table tbody td:nth-child(4) {
+    width: 3%;
+    text-align: right;
   }
-  #devisBody table input[type="number"] {
-    font-size: 10px;
+  #devisBody table th:nth-child(5),
+  #devisBody table tbody td:nth-child(5) {
+    width: 5%;
+    text-align: center;
+  }
+
+  #devisBody table tbody td:nth-child(2) {
+    text-align: right;
+    padding-bottom: 0;
+  }
+  #devisBody table tbody td:nth-child(2) input[type="number"] {
+    border: none;
+    border-bottom: 1.5px solid var(--primary-color);
+    border-radius: 0;
     padding: 2px 6px;
-    max-width: 100%;
+    width: 40px;
+    text-align: center;
     box-sizing: border-box;
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-color);
+    outline-offset: 2px;
+  }
+  #devisBody table tbody td:nth-child(2) input[type="number"]:focus {
+    outline: none;
+    border-bottom-color: var(--secondary-color);
+    background: #fff;
+  }
+
+  .qtyCell {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+  }
+  .qtyCell input {
+    flex-shrink: 0;
   }
   .printOnly {
     display: none;
   }
-  /* Quand on est en mode export/impression */
+
   .printMode input {
     display: none !important;
   }
   .printMode .printOnly {
     display: inline !important;
   }
-  .printMode tbody td:nth-child(7),
-  .printMode thead th:nth-child(7) {
+
+  .printMode #devisBody button {
     display: none !important;
   }
-  #totalsTable {
-    margin-top: 20px;
-    font-size: 11px;
+  .printMode #devisBody table tbody td:nth-child(5),
+  .printMode #devisBody table thead th:nth-child(5) {
+    display: none !important;
   }
+
+  #devisBody button {
+    background-color: var(--primary-color);
+    color: white;
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+    user-select: none;
+    padding: 0;
+  }
+  #devisBody button:hover {
+    background-color: #0f2a43;
+  }
+
+#totalsTable table {
+  width: 100%;
+  table-layout: fixed; /* important */
+}
+
+#totalsTable th:nth-child(1),
+#totalsTable td:nth-child(1) {
+  width: 35%;  /* Largeur Total HT (€) */
+}
+
+#totalsTable th:nth-child(2),
+#totalsTable td:nth-child(2) {
+  width: 3.5%;  /* Largeur Remise (%) */
+}
+
+#totalsTable th:nth-child(3),
+#totalsTable td:nth-child(3) {
+  width: 3.5%;  /* Largeur Remise (€) */
+}
+
+#totalsTable th:nth-child(4),
+#totalsTable td:nth-child(4) {
+  width: 5%;  /* Largeur Total TVA (€) */
+}
+
+#totalsTable th:nth-child(5),
+#totalsTable td:nth-child(5) {
+  width: 5%;  /* Largeur Total TTC (€) */
+}
+
+
+  #totalsTable table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+    table-layout: fixed;
+  }
+
   #totalsTable thead th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    text-align: left;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+
+  #totalsTable tbody td {
+    padding: 6px 10px;
     text-align: right;
-    padding: 4px 6px;
-    border-bottom: 1.5px solid var(--primary-color);
+    font-weight: 600;
+    vertical-align: middle;
   }
-  #devisFooter {
-    margin-top: 25px;
-    font-size: 0.8rem;
+
+  #totalsTable tbody td:first-child {
+    text-align: left;
+    font-weight: 700;
+  }
+
+  #totalsTable input[type="number"] {
+    width: 60px;
+    text-align: right;
+    font-size: 11px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    border: 1px solid #cfdde9;
+  }
+  #totalsTable input[type="number"]:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+  }
+
+  .printMode #remisePercent {
+    display: none !important;
+  }
+  .printMode #remisePercentText {
+    display: inline !important;
+    font-weight: 600;
+    color: var(--text-color);
+  }
+  #remisePercentText {
+    display: none;
+  }
+
+  #signatureWrapper > div {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    border: 1.5px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #signatureBubble {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.2;
     color: var(--text-light);
-    line-height: 1.4;
+    white-space: pre-wrap;
     user-select: text;
-    white-space: pre-line;
+    border: none;
+    padding: 0;
+    margin: 0;
   }
+  #signatureImage {
+    max-width: 200px;
+    max-height: 100px;
+    user-select: none;
+    pointer-events: none;
+    display: block;
+    border: none;
+    border-radius: 4px;
+    object-fit: contain;
+  }
+
+  #signatureCanvasWrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  #signatureCanvas {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    touch-action: none;
+    width: 320px;
+    height: 100px;
+  }
+
   @media (max-width: 960px) {
     #container {
       flex-direction: column;
@@ -381,18 +560,28 @@
       max-height: none;
       margin-bottom: 25px;
     }
+    #devisContainer {
+      width: 100%;
+      max-width: 100%;
+    }
+    #signatureCanvasWrapper {
+      justify-content: center;
+    }
   }
 </style>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="container">
   <aside id="configPanel" aria-label="Configuration complète du devis">
-    <!-- ... même contenu configPanel que précédemment ... -->
     <section id="sectionHeader" class="collapsed">
       <h2>Entête du devis</h2>
+      <label for="logoFile" style="margin-top: 15px; font-weight: 600;">Importer un logo (PNG/JPG/SVG)</label>
+      <input type="file" id="logoFile" accept="image/png, image/jpeg, image/svg+xml" />
+
+      <label><input type="checkbox" id="showLogo" checked /> Afficher le logo</label>
+
       <label for="devisTitle">Titre du document</label>
       <input type="text" id="devisTitle" value="DEVIS" />
       <label for="companyName">Nom de l'entreprise</label>
@@ -408,7 +597,7 @@
       <label for="companyTva">TVA Intracom</label>
       <input type="text" id="companyTva" value="FR12345678901" />
     </section>
-    <!-- ... autres sections inchangées ... -->
+
     <section id="sectionClient" class="collapsed">
       <h2>Informations client</h2>
       <label for="clientLastName">Nom</label>
@@ -431,30 +620,33 @@
       <textarea id="thankYouMsg" rows="4" style="width: 100%; padding:8px; font-size:14px; border-radius:4px;">Merci pour votre confiance.
 Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     </section>
-    <section id="sectionOptionsAffichage" class="collapsed">
-      <h2>Options d'affichage</h2>
-      <label><input type="checkbox" id="showDevisTitle" checked /> Afficher le titre du devis</label>
-      <label><input type="checkbox" id="showCompanyName" checked /> Afficher le nom de l'entreprise</label>
-      <label><input type="checkbox" id="showCompanyAddress" checked /> Afficher l'adresse de l'entreprise</label>
-      <label><input type="checkbox" id="showCompanyPhone" checked /> Afficher le téléphone de l'entreprise</label>
-      <label><input type="checkbox" id="showCompanyEmail" checked /> Afficher l'email de l'entreprise</label>
-      <label><input type="checkbox" id="showCompanySiret" checked /> Afficher le SIRET</label>
-      <label><input type="checkbox" id="showCompanyTva" checked /> Afficher la TVA intracom</label>
-      <hr>
-      <label><input type="checkbox" id="showClientName" checked /> Afficher le nom complet du client</label>
-      <label><input type="checkbox" id="showClientAddress" checked /> Afficher l'adresse client</label>
-      <label><input type="checkbox" id="showClientPostalCity" checked /> Afficher code postal et ville client</label>
-      <label><input type="checkbox" id="showClientEmail" checked /> Afficher l'email client</label>
-      <label><input type="checkbox" id="showClientPhone" checked /> Afficher le téléphone client</label>
-      <label><input type="checkbox" id="showDate" checked /> Afficher la date</label>
-    </section>
+
+<section id="sectionOptionsAffichage" class="collapsed">
+  <h2>Options d'affichage</h2>
+  <label><input type="checkbox" id="showDevisTitle" checked /> Afficher le titre du devis</label>
+  <label><input type="checkbox" id="showCompanyName" checked /> Afficher le nom de l'entreprise</label>
+  <label><input type="checkbox" id="showCompanyAddress" checked /> Afficher l'adresse de l'entreprise</label>
+  <label><input type="checkbox" id="showCompanyPhone" checked /> Afficher le téléphone de l'entreprise</label>
+  <label><input type="checkbox" id="showCompanyEmail" checked /> Afficher l'email de l'entreprise</label>
+  <label><input type="checkbox" id="showCompanySiret" checked /> Afficher le SIRET</label>
+  <label><input type="checkbox" id="showCompanyTva" checked /> Afficher la TVA intracom</label>
+  <hr>
+  <label><input type="checkbox" id="showClientName" checked /> Afficher le nom complet du client</label>
+  <label><input type="checkbox" id="showClientAddress" checked /> Afficher l'adresse client</label>
+  <label><input type="checkbox" id="showClientPostalCity" checked /> Afficher code postal et ville client</label>
+  <label><input type="checkbox" id="showClientEmail" checked /> Afficher l'email client</label>
+  <label><input type="checkbox" id="showClientPhone" checked /> Afficher le téléphone client</label>
+  <label><input type="checkbox" id="showDate" checked /> Afficher la date</label>
+</section>
+
+
     <section id="sectionArticles" class="collapsed">
       <h2>Articles disponibles</h2>
       <div id="articlesList" aria-label="Liste des articles disponibles"></div>
       <h3 style="margin:10px 0 4px 0;">Ajouter un nouvel article</h3>
       <form id="addArticleForm" spellcheck="false" aria-label="Formulaire d'ajout d'article">
-        <label for="newDesc">Description :</label>
-        <input type="text" id="newDesc" required placeholder="Nom de l'article" />
+        <label for="newDesc">Designation :</label>
+        <textarea id="newDesc" required rows="3" style="width:100%; resize: vertical;" placeholder="Nom de l'article"></textarea>
         <label for="newPrice">Prix unitaire HT (€) :</label>
         <input type="number" id="newPrice" required min="0" step="0.01" placeholder="Ex: 25.50" />
         <label for="newTva">TVA (%) :</label>
@@ -462,6 +654,33 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         <button type="submit" id="addArticleBtn">Ajouter l'article</button>
       </form>
     </section>
+
+    <section id="sectionSignature" class="collapsed">
+      <h2>Signature</h2>
+      <label><input type="checkbox" id="showSignatureBubble" checked /> Afficher la bulle texte</label>
+      <label><input type="checkbox" id="showSignatureImage" checked /> Afficher la signature manuscrite (canvas + image)</label>
+
+      <label for="signatureTextArea" style="margin-top:10px;">Texte de signature</label>
+      <textarea id="signatureTextArea" rows="5" style="width:100%; resize: vertical;">Fait à __VILLE__, le __DATE__
+
+Bon pour accord,
+
+Signature et cachet</textarea>
+      <div id="autoDateInfo" style="font-size: 0.8rem; color: var(--text-light); margin-top: 5px;">Le token <code>__DATE__</code> sera remplacé automatiquement par la date du jour.</div>
+
+      <h3 style="margin-top: 12px;">Options d'autonomie</h3>
+      <label><input type="checkbox" id="autoDateCheckbox" /> Date automatique (remplace <code>__DATE__</code> dans le texte)</label>
+      <label><input type="checkbox" id="lockSignatureCheckbox" /> Verrouiller la zone signature (lecture seule)</label>
+
+      <label for="signatureFile" style="margin-top: 10px; font-weight: 600;">Importer une image de signature</label>
+      <input type="file" id="signatureFile" accept="image/png, image/jpeg" />
+
+      <div id="signatureCanvasWrapper">
+        <canvas id="signatureCanvas" width="320" height="100"></canvas>
+        <button id="clearSignatureBtn" type="button">Effacer la signature</button>
+      </div>
+    </section>
+
     <section>
       <h2>Export / Import configuration</h2>
       <div style="display:flex; gap:8px; flex-wrap: wrap;">
@@ -472,75 +691,96 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     </section>
   </aside>
 
-  <main id="devisContainer" role="main" aria-label="Feuille de devis éditable">
-    <div id="devisHeader" contenteditable="true" aria-label="En-tête du devis" spellcheck="false">
-      <h2>DEVIS</h2>
-      <div id="topLine">
+  <main id="devisContainer" role="main" aria-label="Feuille de devis éditable" style="flex-grow: 1;">
+    <div id="devisHeader" aria-label="En-tête du devis" spellcheck="false">
+<div id="logoContainer">
+  <img id="logoImage" alt="Logo" />
+</div>
+
+      <div id="headerLeft">
+        <h2 id="devisTitleDisplay">DEVIS</h2>
         <strong id="companyNameDisplay">Mon Entreprise SARL</strong>
-        <span id="clientFullNameDisplay"></span>
+        <div id="companyAddressDisplay">123 Rue de l'Exemple, 75000 Paris</div>
+        <div id="companyPhoneDisplay">01 23 45 67 89</div>
+        <div id="companyEmailDisplay">contact@monentreprise.fr</div>
+        <div id="companySiretDisplay">123 456 789 00012</div>
+        <div id="companyTvaDisplay">FR12345678901</div>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-top:6px;">
-        <div id="companyInfo" style="max-width:48%;">
-          <p><span id="companyAddressDisplay">123 Rue de l'Exemple, 75000 Paris</span></p>
-          <p><span id="companyPhoneDisplay">Tél : 01 23 45 67 89</span></p>
-          <p><span id="companyEmailDisplay">Email : contact@monentreprise.fr</span></p>
-          <p><span id="companySiretDisplay">SIRET : 123 456 789 00012</span></p>
-          <p><span id="companyTvaDisplay">TVA Intracom : FR12345678901</span></p>
-        </div>
-        <div id="clientInfo" style="max-width:48%; text-align:right;">
-          <p><span id="clientAddressDisplay"></span></p>
-          <p><span id="clientPostalCityDisplay"></span></p>
-          <p><span id="clientEmailDisplay"></span></p>
-          <p><span id="clientPhoneDisplay"></span></p>
-          <p><span id="dateDisplay"></span></p>
+      <div id="headerRight" aria-label="Date du devis" style="font-weight: 700; font-size: 14px; color: var(--text-color); white-space: nowrap; text-align: right;">
+        <div id="dateDisplay">Date : 05/06/2025</div>
+
+        <!-- Infos client déplacées ici sous la date -->
+        <div id="clientInfo" aria-label="Informations client">
+          
+          <p><span class="clientLabel"></span><span id="clientNameDisplay"></span></p>
+          <p><span class="clientLabel"></span><span id="clientAddressDisplay"></span></p>
+          <p><span class="clientLabel"></span><span id="clientPostalCityDisplay"></span></p>
+          <p><span class="clientLabel"></span><span id="clientEmailDisplay"></span></p>
+          <p><span class="clientLabel"></span><span id="clientPhoneDisplay"></span></p>
         </div>
       </div>
     </div>
 
-    <div id="devisBody" contenteditable="false" aria-label="Tableau des articles du devis" spellcheck="false">
-      <table>
-        <thead>
-          <tr>
-            <th>Réf.</th>
-            <th>Description</th>
-            <th>Qté/Tps</th>
-            <th>Prix UT (€)</th>
-            <th>Rem.%</th>
-            <th>MNet HT</th>
-            <th></th> <!-- colonne croix rouge -->
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div id="devisTablesWrapper">
+      <div id="devisBody" spellcheck="false" aria-label="Tableau des articles du devis">
+        <table>
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Qté/Tps</th>
+              <th>Prix UT</th>
+              <th>M HT</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="totalsTable">
+        <table>
+          <thead>
+            <tr>
+              <th>Total HT (€)</th>
+              <th>Remise (%)</th>
+              <th>Remise (€)</th>
+              <th>Total TVA (€)</th>
+              <th>Total TTC (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="totalHTValue">0.00 €</td>
+              <td>
+                <input type="number" id="remisePercent" min="0" max="100" step="0.1" value="0" style="width:60px; text-align:right;" /> 
+                <span id="remisePercentText" class="printOnly"></span>%
+              </td>
+              <td id="remiseValue">0.00 €</td>
+              <td id="totalTVAValue">0.00 €</td>
+              <td id="totalTTCValue">0.00 €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="signatureWrapper"></div>
     </div>
 
-    <div id="totalsTable" style="margin-top: 20px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Total HT (€)</th>
-            <th>Total TVA (€)</th>
-            <th>Total TTC (€)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="totalHTValue" style="text-align:right;">0.00 €</td>
-            <td id="totalTVAValue" style="text-align:right;">0.00 €</td>
-            <td id="totalTTCValue" style="text-align:right;">0.00 €</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div id="devisFooter" contenteditable="true" aria-label="Message de fin de devis" spellcheck="false" style="margin-top:25px; font-size:0.8rem; color: var(--text-light); line-height:1.4; white-space: pre-line;">
+    <div id="devisFooter" aria-label="Message de fin de devis" spellcheck="false" style="
+      margin-top: 25px; 
+      font-size: 0.8rem; 
+      color: var(--text-light); 
+      line-height: 1.4; 
+      white-space: pre-line;
+      user-select: text;
+    ">
       Merci pour votre confiance.<br />Ce devis est valable 30 jours à partir de la date d'émission.
     </div>
   </main>
 </div>
 
 <script>
-  // Variables DOM
+  // DOM elements
   const devisTitleInput = document.getElementById('devisTitle');
   const companyNameInput = document.getElementById('companyName');
   const companyAddressInput = document.getElementById('companyAddress');
@@ -548,6 +788,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
   const companyEmailInput = document.getElementById('companyEmail');
   const companySiretInput = document.getElementById('companySiret');
   const companyTvaInput = document.getElementById('companyTva');
+
   const clientLastNameInput = document.getElementById('clientLastName');
   const clientFirstNameInput = document.getElementById('clientFirstName');
   const clientAddressInput = document.getElementById('clientAddress');
@@ -555,6 +796,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
   const clientCityInput = document.getElementById('clientCity');
   const clientEmailInput = document.getElementById('clientEmail');
   const clientPhoneInput = document.getElementById('clientPhone');
+
   const dateInput = document.getElementById('date');
   const thankYouMsgInput = document.getElementById('thankYouMsg');
   const articlesList = document.getElementById('articlesList');
@@ -566,115 +808,395 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
   const btnExportTxt = document.getElementById('btnExportTxt');
   const fileImportTxt = document.getElementById('fileImportTxt');
   const btnExportPDF = document.getElementById('btnExportPDF');
+  const remiseInput = document.getElementById('remisePercent');
+  const remiseValueDisplay = document.getElementById('remiseValue');
+  const remisePercentText = document.getElementById('remisePercentText');
+  const devisFooter = document.getElementById('devisFooter');
 
-  const displayOptionsCheckboxes = {
-    showDevisTitle: document.getElementById('showDevisTitle'),
-    showCompanyName: document.getElementById('showCompanyName'),
-    showCompanyAddress: document.getElementById('showCompanyAddress'),
-    showCompanyPhone: document.getElementById('showCompanyPhone'),
-    showCompanyEmail: document.getElementById('showCompanyEmail'),
-    showCompanySiret: document.getElementById('showCompanySiret'),
-    showCompanyTva: document.getElementById('showCompanyTva'),
-    showClientName: document.getElementById('showClientName'),
-    showClientAddress: document.getElementById('showClientAddress'),
-    showClientPostalCity: document.getElementById('showClientPostalCity'),
-    showClientEmail: document.getElementById('showClientEmail'),
-    showClientPhone: document.getElementById('showClientPhone'),
-    showDate: document.getElementById('showDate'),
-  };
+  const companyNameDisplay = document.getElementById('companyNameDisplay');
+  const companyAddressDisplay = document.getElementById('companyAddressDisplay');
+  const companyPhoneDisplay = document.getElementById('companyPhoneDisplay');
+  const companyEmailDisplay = document.getElementById('companyEmailDisplay');
+  const companySiretDisplay = document.getElementById('companySiretDisplay');
+  const companyTvaDisplay = document.getElementById('companyTvaDisplay');
+  const dateDisplay = document.getElementById('dateDisplay');
 
+  // Infos client dans le header (maintenant dans #devisHeader #clientInfo)
+  const clientNameDisplay = document.querySelector('#clientInfo #clientNameDisplay');
+  const clientAddressDisplay = document.querySelector('#clientInfo #clientAddressDisplay');
+  const clientPostalCityDisplay = document.querySelector('#clientInfo #clientPostalCityDisplay');
+  const clientEmailDisplay = document.querySelector('#clientInfo #clientEmailDisplay');
+  const clientPhoneDisplay = document.querySelector('#clientInfo #clientPhoneDisplay');
+
+  // Signature elements & options
+  const signatureWrapper = document.getElementById('signatureWrapper');
+  const signatureCanvasWrapper = document.getElementById('signatureCanvasWrapper');
+  const signatureCanvas = document.getElementById('signatureCanvas');
+  const clearSignatureBtn = document.getElementById('clearSignatureBtn');
+  const signatureTextArea = document.getElementById('signatureTextArea');
+  const autoDateCheckbox = document.getElementById('autoDateCheckbox');
+  const lockSignatureCheckbox = document.getElementById('lockSignatureCheckbox');
+  const autoDateInfo = document.getElementById('autoDateInfo');
+  const signatureFileInput = document.getElementById('signatureFile');
+
+  const showSignatureBubble = document.getElementById('showSignatureBubble');
+  const showSignatureImage = document.getElementById('showSignatureImage');
+
+  // Articles and devis items
   let articles = [
     { desc: "Consultation", price: 50.00, tva: 20 },
     { desc: "Développement Web", price: 80.00, tva: 20 },
   ];
   let devisItems = [];
 
+  // Signature dynamic elements in devis (non editable bubble + image)
+  let signatureBubbleDiv = null;
+  let signatureImageElement = null;
+
+  // === Fonctions de mise à jour ===
+
   function updateDevisHeader() {
-    if (displayOptionsCheckboxes.showDevisTitle.checked) {
-      document.querySelector('#devisHeader h2').textContent = devisTitleInput.value || "DEVIS";
-      document.querySelector('#devisHeader h2').style.display = 'block';
+    companyNameDisplay.textContent = companyNameInput.value || '';
+    companyAddressDisplay.textContent = companyAddressInput.value || '';
+    companyPhoneDisplay.textContent = companyPhoneInput.value || '';
+    companyEmailDisplay.textContent = companyEmailInput.value || '';
+    companySiretDisplay.textContent = companySiretInput.value || '';
+    companyTvaDisplay.textContent = companyTvaInput.value || '';
+    if (dateInput.value) {
+      const d = new Date(dateInput.value);
+      const formatted = d.toLocaleDateString('fr-FR');
+      dateDisplay.textContent = 'Date : ' + formatted;
     } else {
-      document.querySelector('#devisHeader h2').style.display = 'none';
+      dateDisplay.textContent = 'Date : ';
     }
-    if (displayOptionsCheckboxes.showCompanyName.checked) {
-      document.getElementById('companyNameDisplay').textContent = companyNameInput.value || '';
-      document.getElementById('companyNameDisplay').style.display = 'inline';
-    } else {
-      document.getElementById('companyNameDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showCompanyAddress.checked) {
-      document.getElementById('companyAddressDisplay').textContent = companyAddressInput.value || '';
-      document.getElementById('companyAddressDisplay').style.display = 'block';
-    } else {
-      document.getElementById('companyAddressDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showCompanyPhone.checked) {
-      document.getElementById('companyPhoneDisplay').textContent = 'Tél : ' + (companyPhoneInput.value || '');
-      document.getElementById('companyPhoneDisplay').style.display = 'block';
-    } else {
-      document.getElementById('companyPhoneDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showCompanyEmail.checked) {
-      document.getElementById('companyEmailDisplay').textContent = 'Email : ' + (companyEmailInput.value || '');
-      document.getElementById('companyEmailDisplay').style.display = 'block';
-    } else {
-      document.getElementById('companyEmailDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showCompanySiret.checked) {
-      document.getElementById('companySiretDisplay').textContent = 'SIRET : ' + (companySiretInput.value || '');
-      document.getElementById('companySiretDisplay').style.display = 'block';
-    } else {
-      document.getElementById('companySiretDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showCompanyTva.checked) {
-      document.getElementById('companyTvaDisplay').textContent = 'TVA Intracom : ' + (companyTvaInput.value || '');
-      document.getElementById('companyTvaDisplay').style.display = 'block';
-    } else {
-      document.getElementById('companyTvaDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showClientName.checked) {
-      const clientFullName = (clientLastNameInput.value + ' ' + clientFirstNameInput.value).trim();
-      document.getElementById('clientFullNameDisplay').textContent = clientFullName;
-      document.getElementById('clientFullNameDisplay').style.display = 'inline';
-    } else {
-      document.getElementById('clientFullNameDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showClientAddress.checked) {
-      document.getElementById('clientAddressDisplay').textContent = clientAddressInput.value || '';
-      document.getElementById('clientAddressDisplay').style.display = 'block';
-    } else {
-      document.getElementById('clientAddressDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showClientPostalCity.checked) {
-      document.getElementById('clientPostalCityDisplay').textContent = (clientPostalCodeInput.value + ' ' + clientCityInput.value).trim();
-      document.getElementById('clientPostalCityDisplay').style.display = 'block';
-    } else {
-      document.getElementById('clientPostalCityDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showClientEmail.checked) {
-      document.getElementById('clientEmailDisplay').textContent = clientEmailInput.value || '';
-      document.getElementById('clientEmailDisplay').style.display = 'block';
-    } else {
-      document.getElementById('clientEmailDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showClientPhone.checked) {
-      document.getElementById('clientPhoneDisplay').textContent = clientPhoneInput.value || '';
-      document.getElementById('clientPhoneDisplay').style.display = 'block';
-    } else {
-      document.getElementById('clientPhoneDisplay').style.display = 'none';
-    }
-    if (displayOptionsCheckboxes.showDate.checked) {
-      document.getElementById('dateDisplay').textContent = 'Date : ' + (dateInput.value || '');
-      document.getElementById('dateDisplay').style.display = 'block';
-    } else {
-      document.getElementById('dateDisplay').style.display = 'none';
-    }
+    devisTitleDisplay.textContent = devisTitleInput.value || '';
+  }
+
+  function updateClientInfo() {
+    let fullName = (clientFirstNameInput.value + ' ' + clientLastNameInput.value).trim();
+    clientNameDisplay.textContent = fullName || '';
+    clientAddressDisplay.textContent = clientAddressInput.value || '';
+    let postalCity = '';
+    if(clientPostalCodeInput.value) postalCity += clientPostalCodeInput.value;
+    if(clientCityInput.value) postalCity += (postalCity ? ' ' : '') + clientCityInput.value;
+    clientPostalCityDisplay.textContent = postalCity;
+    clientEmailDisplay.textContent = clientEmailInput.value || '';
+    clientPhoneDisplay.textContent = clientPhoneInput.value || '';
   }
 
   function updateDevisFooter() {
-    const footer = document.getElementById('devisFooter');
-    footer.innerHTML = thankYouMsgInput.value || "Merci pour votre confiance.\nCe devis est valable 30 jours à partir de la date d'émission.";
+    devisFooter.innerHTML = thankYouMsgInput.value || "Merci pour votre confiance.\nCe devis est valable 30 jours à partir de la date d'émission.";
   }
+
+  function applyAutoDate(text) {
+    if (!autoDateCheckbox.checked) return text;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${dd}/${mm}/${yyyy}`;
+    return text.replace(/__DATE__/g, formattedDate);
+  }
+
+  // === Gestion visibilité infos client selon options ===
+  // Récupérer l'état des cases à cocher
+
+function updateClientInfoVisibility() {
+  
+    const showDevisTitle = document.getElementById('showDevisTitle').checked;
+  const showCompanyName = document.getElementById('showCompanyName').checked;
+  const showCompanyAddress = document.getElementById('showCompanyAddress').checked;
+  const showCompanyPhone = document.getElementById('showCompanyPhone').checked;
+  const showCompanyEmail = document.getElementById('showCompanyEmail').checked;
+  const showCompanySiret = document.getElementById('showCompanySiret').checked;
+  const showCompanyTva = document.getElementById('showCompanyTva').checked;
+
+  // Appliquer la visibilité en fonction des options sélectionnées
+  const companyNameElem = document.getElementById('companyNameDisplay');
+  const companyAddressElem = document.getElementById('companyAddressDisplay');
+  const companyPhoneElem = document.getElementById('companyPhoneDisplay');
+  const companyEmailElem = document.getElementById('companyEmailDisplay');
+  const companySiretElem = document.getElementById('companySiretDisplay');
+  const companyTvaElem = document.getElementById('companyTvaDisplay');
+  const devisTitleElem = document.getElementById('devisTitleDisplay');
+
+  companyNameElem.style.display = showCompanyName ? '' : 'none';
+  companyAddressElem.style.display = showCompanyAddress ? '' : 'none';
+  companyPhoneElem.style.display = showCompanyPhone ? '' : 'none';
+  companyEmailElem.style.display = showCompanyEmail ? '' : 'none';
+  companySiretElem.style.display = showCompanySiret ? '' : 'none';
+  companyTvaElem.style.display = showCompanyTva ? '' : 'none';
+  devisTitleElem.style.display = showDevisTitle ? '' : 'none';
+
+  
+  
+  const showClientName = document.getElementById('showClientName').checked;
+  const showClientAddress = document.getElementById('showClientAddress').checked;
+  const showClientPostalCity = document.getElementById('showClientPostalCity').checked;
+  const showClientEmail = document.getElementById('showClientEmail').checked;
+  const showClientPhone = document.getElementById('showClientPhone').checked;
+  const showDate = document.getElementById('showDate').checked;
+
+  const clientNameElem = document.getElementById('clientNameDisplay');
+  const clientAddressElem = document.getElementById('clientAddressDisplay');
+  const clientPostalCityElem = document.getElementById('clientPostalCityDisplay');
+  const clientEmailElem = document.getElementById('clientEmailDisplay');
+  const clientPhoneElem = document.getElementById('clientPhoneDisplay');
+  const dateElem = document.getElementById('dateDisplay');
+
+  // On masque/affiche le <p> parent pour éviter les bugs d'ordre
+  clientNameElem.parentElement.style.display = showClientName ? '' : 'none';
+  clientAddressElem.parentElement.style.display = showClientAddress ? '' : 'none';
+  clientPostalCityElem.parentElement.style.display = showClientPostalCity ? '' : 'none';
+  clientEmailElem.parentElement.style.display = showClientEmail ? '' : 'none';
+  clientPhoneElem.parentElement.style.display = showClientPhone ? '' : 'none';
+  dateElem.style.display = showDate ? '' : 'none';
+
+}
+
+const logoFileInput = document.getElementById('logoFile');
+const logoImage = document.getElementById('logoImage');
+const showLogoCheckbox = document.getElementById('showLogo');
+
+function updateLogoVisibility() {
+  logoImage.style.display = showLogoCheckbox.checked && logoImage.src ? 'block' : 'none';
+}
+
+logoFileInput.addEventListener('change', () => {
+  const file = logoFileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    logoImage.src = e.target.result;
+    updateLogoVisibility();
+    saveData(); // Sauvegarde la config avec le logo
+  };
+  reader.readAsDataURL(file);
+  logoFileInput.value = '';
+});
+
+showLogoCheckbox.addEventListener('change', () => {
+  updateLogoVisibility();
+  saveData();
+});
+
+// Dans ta fonction saveData() ajoute :
+function saveData() {
+  // ... ton code actuel ...
+  const data = {
+    // ... autres données ...
+    logoImageData: logoImage.src || '',
+    showLogo: showLogoCheckbox.checked,
+  };
+  localStorage.setItem('devisData', JSON.stringify(data));
+}
+
+// Dans ta fonction restoreData() ajoute :
+function restoreData() {
+  const str = localStorage.getItem('devisData');
+  if (!str) return;
+  try {
+    const data = JSON.parse(str);
+    // ... restauration autres champs ...
+
+    if (data.logoImageData) {
+      logoImage.src = data.logoImageData;
+    } else {
+      logoImage.src = '';
+    }
+
+    if (typeof data.showLogo === 'boolean') {
+      showLogoCheckbox.checked = data.showLogo;
+    }
+
+    updateLogoVisibility();
+
+  } catch (e) {
+    console.error('Erreur restauration données :', e);
+  }
+}
+
+// Appelle restoreData() au chargement initial de la page
+window.addEventListener('DOMContentLoaded', () => {
+  restoreData();
+  // ... autres initialisations ...
+});
+
+  // === Gestion signature ===
+
+  function renderSignatureArea() {
+    signatureWrapper.innerHTML = '';
+
+    const showBubble = showSignatureBubble.checked;
+    const showImage = showSignatureImage.checked;
+
+    signatureCanvasWrapper.style.display = showImage ? 'flex' : 'none';
+
+    if (!showBubble && !showImage) return;
+
+    const container = document.createElement('div');
+    container.id = 'signatureWrapperContainer';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '8px';
+
+    const signatureCaption = document.createElement('div');
+    signatureCaption.textContent = 'Signature et cachet';
+    signatureCaption.style.fontWeight = '600';
+    signatureCaption.style.color = 'var(--text-light)';
+    container.appendChild(signatureCaption);
+
+    const signatureContent = document.createElement('div');
+    signatureContent.style.display = 'flex';
+    signatureContent.style.gap = '15px';
+    signatureContent.style.alignItems = 'flex-start';
+
+    if (showBubble) {
+      if (!signatureBubbleDiv) {
+        signatureBubbleDiv = document.createElement('div');
+        signatureBubbleDiv.id = 'signatureBubble';
+        signatureBubbleDiv.contentEditable = false;
+        signatureBubbleDiv.setAttribute('aria-label', 'Espace signature');
+        signatureBubbleDiv.spellcheck = false;
+        signatureBubbleDiv.style.userSelect = 'text';
+      }
+      let sigText = applyAutoDate(signatureTextArea.value);
+      signatureBubbleDiv.textContent = sigText;
+      signatureContent.appendChild(signatureBubbleDiv);
+    }
+
+    if (showImage) {
+      if (!signatureImageElement) {
+        signatureImageElement = document.createElement('img');
+        signatureImageElement.id = 'signatureImage';
+        signatureImageElement.alt = 'Image de signature manuscrite';
+        signatureImageElement.style.display = 'none';
+      }
+      signatureContent.appendChild(signatureImageElement);
+    }
+
+    container.appendChild(signatureContent);
+    signatureWrapper.appendChild(container);
+  }
+
+  function saveData() {
+    const data = {
+      headerForm: {
+        devisTitle: devisTitleInput.value,
+        companyName: companyNameInput.value,
+        companyAddress: companyAddressInput.value,
+        companyPhone: companyPhoneInput.value,
+        companyEmail: companyEmailInput.value,
+        companySiret: companySiretInput.value,
+        companyTva: companyTvaInput.value,
+      },
+      clientForm: {
+        clientLastName: clientLastNameInput.value,
+        clientFirstName: clientFirstNameInput.value,
+        clientAddress: clientAddressInput.value,
+        clientPostalCode: clientPostalCodeInput.value,
+        clientCity: clientCityInput.value,
+        clientEmail: clientEmailInput.value,
+        clientPhone: clientPhoneInput.value,
+        date: dateInput.value,
+        thankYouMsg: thankYouMsgInput.value,
+      },
+      displayOptions: {
+        showDevisTitle: document.getElementById('showDevisTitle').checked,
+        showCompanyName: document.getElementById('showCompanyName').checked,
+        showCompanyAddress: document.getElementById('showCompanyAddress').checked,
+        showCompanyPhone: document.getElementById('showCompanyPhone').checked,
+        showCompanyEmail: document.getElementById('showCompanyEmail').checked,
+        showCompanySiret: document.getElementById('showCompanySiret').checked,
+        showCompanyTva: document.getElementById('showCompanyTva').checked,
+        showClientName: document.getElementById('showClientName').checked,
+        showClientAddress: document.getElementById('showClientAddress').checked,
+        showClientPostalCity: document.getElementById('showClientPostalCity').checked,
+        showClientEmail: document.getElementById('showClientEmail').checked,
+        showClientPhone: document.getElementById('showClientPhone').checked,
+        showDate: document.getElementById('showDate').checked,
+      },
+      articles,
+      devisItems,
+      remisePercent: remiseInput.value,
+      thankYouMsg: thankYouMsgInput.value,
+      signatureText: signatureTextArea.value,
+      signatureOptions: {
+        autoDate: autoDateCheckbox.checked,
+        lockSignature: lockSignatureCheckbox.checked,
+        showSignatureBubble: showSignatureBubble.checked,
+        showSignatureImage: showSignatureImage.checked,
+      },
+      signatureImageData: signatureCanvas.toDataURL('image/png'),
+    };
+    localStorage.setItem('devisData', JSON.stringify(data));
+  }
+
+  function restoreData() {
+    const str = localStorage.getItem('devisData');
+    if (!str) return;
+    try {
+      const data = JSON.parse(str);
+      Object.entries(data.headerForm || {}).forEach(([k, v]) => {
+        const el = document.getElementById(k);
+        if (el) el.value = v;
+      });
+      Object.entries(data.clientForm || {}).forEach(([k, v]) => {
+        const el = document.getElementById(k);
+        if (el) el.value = v;
+      });
+      if (data.displayOptions) {
+        Object.entries(data.displayOptions).forEach(([k, v]) => {
+          const el = document.getElementById(k);
+          if (el && typeof v === 'boolean') el.checked = v;
+        });
+      }
+      if (Array.isArray(data.articles)) articles = data.articles;
+      if (Array.isArray(data.devisItems)) devisItems = data.devisItems;
+      if (data.remisePercent !== undefined) {
+        remiseInput.value = data.remisePercent;
+      }
+      if (data.thankYouMsg !== undefined) {
+        thankYouMsgInput.value = data.thankYouMsg;
+      }
+      if (data.signatureText !== undefined) {
+        signatureTextArea.value = data.signatureText;
+      }
+      if (data.signatureOptions) {
+        autoDateCheckbox.checked = !!data.signatureOptions.autoDate;
+        lockSignatureCheckbox.checked = !!data.signatureOptions.lockSignature;
+        showSignatureBubble.checked = !!data.signatureOptions.showSignatureBubble;
+        showSignatureImage.checked = !!data.signatureOptions.showSignatureImage;
+      }
+      if (data.signatureImageData) {
+        const img = new Image();
+        img.onload = () => {
+          const ctx = signatureCanvas.getContext('2d');
+          ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+          ctx.drawImage(img, 0, 0, signatureCanvas.width, signatureCanvas.height);
+          if(signatureImageElement) {
+            signatureImageElement.src = data.signatureImageData;
+            signatureImageElement.style.display = 'block';
+          }
+        };
+        img.src = data.signatureImageData;
+      }
+      updateAutoDateInfoVisibility();
+      updateSignatureLock();
+      renderSignatureArea();
+      updateDevisHeader();
+      updateClientInfo();
+      updateClientInfoVisibility(); // <-- applique la visibilité des infos client selon options
+      updateDevisFooter();
+      renderArticles();
+      updateDevisTable();
+    } catch (e) {
+      console.error('Erreur restauration données :', e);
+    }
+  }
+
+  // === Gestion articles ===
 
   function renderArticles() {
     articlesList.innerHTML = '';
@@ -682,11 +1204,13 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       const div = document.createElement('div');
       div.className = 'articleItem';
 
-      const descInput = document.createElement('input');
-      descInput.type = 'text';
+      const descInput = document.createElement('textarea');
       descInput.value = art.desc;
       descInput.className = 'descInput';
-      descInput.placeholder = "Description";
+      descInput.rows = 3;
+      descInput.style.width = '100%';
+      descInput.style.resize = 'vertical';
+      descInput.placeholder = "Designation";
       descInput.addEventListener('input', () => {
         articles[i].desc = descInput.value;
         saveData();
@@ -719,7 +1243,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       });
 
       const addBtn = document.createElement('button');
-      addBtn.textContent = 'Ajouter';
+      addBtn.textContent = '+';
       addBtn.className = 'addToDevisBtn';
       addBtn.title = 'Ajouter cet article au devis';
       addBtn.addEventListener('click', () => {
@@ -728,7 +1252,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       });
 
       const removeBtn = document.createElement('button');
-      removeBtn.textContent = 'Supprimer';
+      removeBtn.textContent = '×';
       removeBtn.className = 'removeArticleBtn';
       removeBtn.title = 'Supprimer cet article';
       removeBtn.addEventListener('click', () => {
@@ -754,8 +1278,7 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     if (existing) {
       existing.qty += qty;
     } else {
-      const ref = "REF" + String(devisItems.length + 1).padStart(3, '0');
-      devisItems.push({ qty, price, tva, desc, reference: ref, remise: 0 });
+      devisItems.push({ qty, price, tva, desc });
     }
     updateDevisTable();
     saveData();
@@ -765,33 +1288,21 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     tbody.innerHTML = '';
     let totalHT = 0;
     let totalTVA = 0;
+
     devisItems.forEach((item, index) => {
       const tr = document.createElement('tr');
 
-      // Réf.
-      const tdRef = document.createElement('td');
-      tdRef.textContent = item.reference || '';
-      tr.appendChild(tdRef);
-
-      // Description
       const tdDesc = document.createElement('td');
-      tdDesc.textContent = item.desc;
+      tdDesc.innerHTML = item.desc.replace(/\n/g, '<br>');
       tr.appendChild(tdDesc);
 
-      // Qté/Tps avec input + span pour export
       const tdQty = document.createElement('td');
-      tdQty.style.textAlign = 'right';
-
+      tdQty.className = 'qtyCell';
       const qtyInput = document.createElement('input');
       qtyInput.type = 'number';
       qtyInput.min = 0;
       qtyInput.value = item.qty;
-      qtyInput.style.width = '60px';
-
-      const qtySpan = document.createElement('span');
-      qtySpan.textContent = item.qty;
-      qtySpan.className = 'printOnly';
-
+      qtyInput.style.width = '40px';
       qtyInput.addEventListener('change', () => {
         let val = parseInt(qtyInput.value);
         if (isNaN(val) || val < 0) val = 0;
@@ -803,67 +1314,39 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
         updateDevisTable();
         saveData();
       });
-
+      const qtySpan = document.createElement('span');
+      qtySpan.className = 'printOnly';
+      qtySpan.textContent = item.qty;
       tdQty.appendChild(qtyInput);
       tdQty.appendChild(qtySpan);
       tr.appendChild(tdQty);
 
-      // Prix UT
       const tdPrice = document.createElement('td');
       tdPrice.textContent = item.price.toFixed(2);
       tdPrice.style.textAlign = 'right';
       tr.appendChild(tdPrice);
 
-      // Remise avec input + span pour export
-      const tdRem = document.createElement('td');
-      tdRem.style.textAlign = 'right';
-
-      const remInput = document.createElement('input');
-      remInput.type = 'number';
-      remInput.min = 0;
-      remInput.max = 100;
-      remInput.step = 0.01;
-      remInput.value = item.remise !== undefined ? item.remise : 0;
-      remInput.style.width = '50px';
-
-      const remSpan = document.createElement('span');
-      remSpan.textContent = remInput.value;
-      remSpan.className = 'printOnly';
-
-      remInput.addEventListener('change', () => {
-        let val = parseFloat(remInput.value);
-        if (isNaN(val) || val < 0) val = 0;
-        if (val > 100) val = 100;
-        devisItems[index].remise = val;
-        updateDevisTable();
-        saveData();
-      });
-
-      tdRem.appendChild(remInput);
-      tdRem.appendChild(remSpan);
-      tr.appendChild(tdRem);
-
-      // MNet HT
-      const netHT = item.qty * item.price * (1 - (item.remise || 0) / 100);
+      const netHT = item.qty * item.price;
       const tdNetHT = document.createElement('td');
       tdNetHT.textContent = netHT.toFixed(2);
       tdNetHT.style.textAlign = 'right';
       tr.appendChild(tdNetHT);
 
-      // Colonne croix rouge (bouton supprimer)
       const tdRemove = document.createElement('td');
       tdRemove.style.textAlign = 'center';
-
       const removeBtn = document.createElement('button');
-      removeBtn.textContent = '✖';
+      removeBtn.textContent = '×';
       removeBtn.title = 'Supprimer une unité de cet article';
-      removeBtn.style.cursor = 'pointer';
-      removeBtn.style.padding = '2px 6px';
-      removeBtn.style.fontSize = '1rem';
-      removeBtn.style.lineHeight = '1';
-      removeBtn.style.background = 'transparent';
+      removeBtn.style.backgroundColor = 'var(--primary-color)';
+      removeBtn.style.color = 'white';
+      removeBtn.style.borderRadius = '4px';
+      removeBtn.style.padding = '2px 8px';
+      removeBtn.style.fontWeight = 'bold';
       removeBtn.style.border = 'none';
-      removeBtn.style.color = 'red';
+      removeBtn.style.cursor = 'pointer';
+      removeBtn.style.fontSize = '1.1rem';
+      removeBtn.style.lineHeight = '1';
+      removeBtn.style.userSelect = 'none';
 
       removeBtn.addEventListener('click', () => {
         if (devisItems[index].qty > 1) {
@@ -883,109 +1366,127 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
       totalHT += netHT;
       totalTVA += netHT * (item.tva / 100);
     });
-    const totalTTC = totalHT + totalTVA;
-    document.getElementById('totalHTValue').textContent = totalHT.toFixed(2) + ' €';
-    document.getElementById('totalTVAValue').textContent = totalTVA.toFixed(2) + ' €';
-    document.getElementById('totalTTCValue').textContent = totalTTC.toFixed(2) + ' €';
+
+    let remisePercent = parseFloat(remiseInput.value);
+    if (isNaN(remisePercent) || remisePercent < 0) remisePercent = 0;
+    if (remisePercent > 100) remisePercent = 100;
+
+    const remiseAmount = (totalHT * remisePercent) / 100;
+    const totalHTRemise = totalHT - remiseAmount;
+    const totalTVARemise = totalHTRemise * (totalHT > 0 ? (totalTVA / totalHT) : 0);
+    const totalTTCRemise = totalHTRemise + totalTVARemise;
+
+    remiseValueDisplay.textContent = remiseAmount.toFixed(2) + ' €';
+    document.getElementById('totalHTValue').textContent = totalHTRemise.toFixed(2) + ' €';
+    document.getElementById('totalTVAValue').textContent = totalTVARemise.toFixed(2) + ' €';
+    document.getElementById('totalTTCValue').textContent = totalTTCRemise.toFixed(2) + ' €';
+
+    remisePercentText.textContent = remisePercent.toFixed(1);
   }
 
-  addArticleForm.addEventListener('submit', e => {
+  // === Gestion signature canvas ===
+
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  const ctx = signatureCanvas.getContext('2d');
+  ctx.strokeStyle = 'var(--primary-color)';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  function getCanvasPos(e) {
+    const rect = signatureCanvas.getBoundingClientRect();
+    if (e.touches && e.touches.length > 0) {
+      return [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+    }
+    return [e.clientX - rect.left, e.clientY - rect.top];
+  }
+  function startDrawing(e) {
+    if(lockSignatureCheckbox.checked) return;
+    isDrawing = true;
+    [lastX, lastY] = getCanvasPos(e);
     e.preventDefault();
-    const desc = newDescInput.value.trim();
-    const price = parseFloat(newPriceInput.value);
-    const tva = parseFloat(newTvaInput.value);
-    if (!desc || isNaN(price) || price < 0 || isNaN(tva) || tva < 0 || tva > 100) {
-      alert('Merci de remplir correctement tous les champs de l\'article.');
-      return;
+  }
+  function draw(e) {
+    if (!isDrawing) return;
+    const [x, y] = getCanvasPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+    e.preventDefault();
+  }
+  function stopDrawing(e) {
+    if(!isDrawing) return;
+    isDrawing = false;
+    saveSignatureCanvas();
+    e.preventDefault();
+  }
+  signatureCanvas.addEventListener('mousedown', startDrawing);
+  signatureCanvas.addEventListener('touchstart', startDrawing);
+  signatureCanvas.addEventListener('mousemove', draw);
+  signatureCanvas.addEventListener('touchmove', draw);
+  signatureCanvas.addEventListener('mouseup', stopDrawing);
+  signatureCanvas.addEventListener('mouseout', stopDrawing);
+  signatureCanvas.addEventListener('touchend', stopDrawing);
+
+  clearSignatureBtn.addEventListener('click', () => {
+    ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+    if(signatureImageElement) {
+      signatureImageElement.src = '';
+      signatureImageElement.style.display = 'none';
     }
-    if (articles.some(a => a.desc === desc)) {
-      alert('Cette description existe déjà dans les articles disponibles.');
-      return;
-    }
-    articles.push({ desc, price, tva });
-    renderArticles();
-    addArticleForm.reset();
-    newTvaInput.value = "20";
     saveData();
   });
 
-  function saveData() {
-    const data = {
-      headerForm: {
-        devisTitle: devisTitleInput.value,
-        companyName: companyNameInput.value,
-        companyAddress: companyAddressInput.value,
-        companyPhone: companyPhoneInput.value,
-        companyEmail: companyEmailInput.value,
-        companySiret: companySiretInput.value,
-        companyTva: companyTvaInput.value,
-      },
-      clientForm: {
-        clientLastName: clientLastNameInput.value,
-        clientFirstName: clientFirstNameInput.value,
-        clientAddress: clientAddressInput.value,
-        clientPostalCode: clientPostalCodeInput.value,
-        clientCity: clientCityInput.value,
-        clientEmail: clientEmailInput.value,
-        clientPhone: clientPhoneInput.value,
-        date: dateInput.value,
-        thankYouMsg: thankYouMsgInput.value,
-      },
-      displayOptions: {
-        showDevisTitle: displayOptionsCheckboxes.showDevisTitle.checked,
-        showCompanyName: displayOptionsCheckboxes.showCompanyName.checked,
-        showCompanyAddress: displayOptionsCheckboxes.showCompanyAddress.checked,
-        showCompanyPhone: displayOptionsCheckboxes.showCompanyPhone.checked,
-        showCompanyEmail: displayOptionsCheckboxes.showCompanyEmail.checked,
-        showCompanySiret: displayOptionsCheckboxes.showCompanySiret.checked,
-        showCompanyTva: displayOptionsCheckboxes.showCompanyTva.checked,
-        showClientName: displayOptionsCheckboxes.showClientName.checked,
-        showClientAddress: displayOptionsCheckboxes.showClientAddress.checked,
-        showClientPostalCity: displayOptionsCheckboxes.showClientPostalCity.checked,
-        showClientEmail: displayOptionsCheckboxes.showClientEmail.checked,
-        showClientPhone: displayOptionsCheckboxes.showClientPhone.checked,
-        showDate: displayOptionsCheckboxes.showDate.checked,
-      },
-      articles,
-      devisItems,
+  signatureFileInput.addEventListener('change', () => {
+    if (signatureFileInput.files.length === 0) return;
+    const file = signatureFileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+        ctx.drawImage(img, 0, 0, signatureCanvas.width, signatureCanvas.height);
+        if(signatureImageElement) {
+          signatureImageElement.src = e.target.result;
+          signatureImageElement.style.display = 'block';
+        }
+        saveData();
+      };
+      img.src = e.target.result;
     };
-    localStorage.setItem('devisData', JSON.stringify(data));
+    reader.readAsDataURL(file);
+    signatureFileInput.value = '';
+  });
+
+  function saveSignatureCanvas() {
+    const dataURL = signatureCanvas.toDataURL('image/png');
+    if(signatureImageElement) {
+      signatureImageElement.src = dataURL;
+      signatureImageElement.style.display = 'block';
+    }
+    saveData();
   }
 
-  function restoreData() {
-    const str = localStorage.getItem('devisData');
-    if (!str) return;
-    try {
-      const data = JSON.parse(str);
-      Object.entries(data.headerForm).forEach(([k, v]) => {
-        const el = document.getElementById(k);
-        if (el) el.value = v;
-      });
-      Object.entries(data.clientForm).forEach(([k, v]) => {
-        const el = document.getElementById(k);
-        if (el) el.value = v;
-      });
-      if (data.displayOptions) {
-        Object.entries(data.displayOptions).forEach(([k, v]) => {
-          const el = document.getElementById(k);
-          if (el && typeof v === 'boolean') el.checked = v;
-        });
-      }
-      if (Array.isArray(data.articles)) articles = data.articles;
-      if (Array.isArray(data.devisItems)) devisItems = data.devisItems;
-      renderArticles();
-      updateDevisTable();
-      updateDevisHeader();
-      updateDevisFooter();
-    } catch (e) {
-      console.error('Erreur restauration données :', e);
-    }
+  function updateSignatureLock() {
+    signatureTextArea.readOnly = lockSignatureCheckbox.checked;
+    signatureCanvas.style.pointerEvents = lockSignatureCheckbox.checked ? 'none' : 'auto';
+    clearSignatureBtn.disabled = lockSignatureCheckbox.checked;
+    signatureFileInput.disabled = lockSignatureCheckbox.checked;
   }
+
+  function updateAutoDateInfoVisibility() {
+    autoDateInfo.style.display = autoDateCheckbox.checked ? 'block' : 'none';
+  }
+
+  // === Synchronisation mise à jour ===
 
   [
     devisTitleInput, companyNameInput, companyAddressInput, companyPhoneInput, companyEmailInput,
-    companySiretInput, companyTvaInput, clientLastNameInput, clientFirstNameInput, clientAddressInput,
-    clientPostalCodeInput, clientCityInput, clientEmailInput, clientPhoneInput, dateInput
+    companySiretInput, companyTvaInput
   ].forEach(input => {
     input.addEventListener('input', () => {
       updateDevisHeader();
@@ -993,195 +1494,215 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
     });
   });
 
+  [
+    clientLastNameInput, clientFirstNameInput, clientAddressInput, clientPostalCodeInput,
+    clientCityInput, clientEmailInput, clientPhoneInput
+  ].forEach(input => {
+    input.addEventListener('input', () => {
+      updateClientInfo();
+      saveData();
+    });
+  });
+
+  dateInput.addEventListener('input', () => {
+    updateDevisHeader();
+    saveData();
+  });
+
   thankYouMsgInput.addEventListener('input', () => {
     updateDevisFooter();
     saveData();
   });
 
-  Object.values(displayOptionsCheckboxes).forEach(cb => {
+  Array.from(document.querySelectorAll('#configPanel input[type=checkbox]')).forEach(cb => {
     cb.addEventListener('change', () => {
       updateDevisHeader();
+      renderSignatureArea();
+      updateClientInfoVisibility(); // <-- ajout ici pour appliquer la visibilité client
       saveData();
     });
   });
 
+  remiseInput.addEventListener('input', () => {
+    updateDevisTable();
+    saveData();
+  });
+
+  showSignatureBubble.addEventListener('change', () => {
+    renderSignatureArea();
+    saveData();
+  });
+  showSignatureImage.addEventListener('change', () => {
+    renderSignatureArea();
+    saveData();
+  });
+
+  signatureTextArea.addEventListener('input', () => {
+    renderSignatureArea();
+    saveData();
+  });
+
+  autoDateCheckbox.addEventListener('change', () => {
+    updateAutoDateInfoVisibility();
+    renderSignatureArea();
+    saveData();
+  });
+
+  lockSignatureCheckbox.addEventListener('change', () => {
+    updateSignatureLock();
+    saveData();
+  });
+
+  // Formulaire ajout article
+  addArticleForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const desc = newDescInput.value.trim();
+    const price = parseFloat(newPriceInput.value);
+    const tva = parseFloat(newTvaInput.value);
+    if (!desc || isNaN(price) || isNaN(tva)) {
+      alert('Veuillez remplir tous les champs correctement.');
+      return;
+    }
+    articles.push({ desc, price, tva });
+    renderArticles();
+    newDescInput.value = '';
+    newPriceInput.value = '';
+    newTvaInput.value = '20';
+    saveData();
+  });
+
+  // Export config TXT
   btnExportTxt.addEventListener('click', () => {
-    const data = {
-      headerForm: {
-        devisTitle: devisTitleInput.value,
-        companyName: companyNameInput.value,
-        companyAddress: companyAddressInput.value,
-        companyPhone: companyPhoneInput.value,
-        companyEmail: companyEmailInput.value,
-        companySiret: companySiretInput.value,
-        companyTva: companyTvaInput.value,
-      },
-      clientForm: {
-        clientLastName: clientLastNameInput.value,
-        clientFirstName: clientFirstNameInput.value,
-        clientAddress: clientAddressInput.value,
-        clientPostalCode: clientPostalCodeInput.value,
-        clientCity: clientCityInput.value,
-        clientEmail: clientEmailInput.value,
-        clientPhone: clientPhoneInput.value,
-        date: dateInput.value,
-        thankYouMsg: thankYouMsgInput.value,
-      },
-      displayOptions: {
-        showDevisTitle: displayOptionsCheckboxes.showDevisTitle.checked,
-        showCompanyName: displayOptionsCheckboxes.showCompanyName.checked,
-        showCompanyAddress: displayOptionsCheckboxes.showCompanyAddress.checked,
-        showCompanyPhone: displayOptionsCheckboxes.showCompanyPhone.checked,
-        showCompanyEmail: displayOptionsCheckboxes.showCompanyEmail.checked,
-        showCompanySiret: displayOptionsCheckboxes.showCompanySiret.checked,
-        showCompanyTva: displayOptionsCheckboxes.showCompanyTva.checked,
-        showClientName: displayOptionsCheckboxes.showClientName.checked,
-        showClientAddress: displayOptionsCheckboxes.showClientAddress.checked,
-        showClientPostalCity: displayOptionsCheckboxes.showClientPostalCity.checked,
-        showClientEmail: displayOptionsCheckboxes.showClientEmail.checked,
-        showClientPhone: displayOptionsCheckboxes.showClientPhone.checked,
-        showDate: displayOptionsCheckboxes.showDate.checked,
-      },
-      articles,
-      devisItems,
-    };
-    const text = JSON.stringify(data, null, 2);
-    const blob = new Blob([text], {type: 'application/json'});
+    const data = localStorage.getItem('devisData');
+    if (!data) {
+      alert('Aucune configuration sauvegardée.');
+      return;
+    }
+    const blob = new Blob([data], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'devis_config.json';
+    a.download = 'devis_config.txt';
     a.click();
     URL.revokeObjectURL(url);
   });
 
+  // Import config TXT
   fileImportTxt.addEventListener('change', () => {
-    if (fileImportTxt.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        try {
-          const data = JSON.parse(e.target.result);
-          if (data.headerForm) {
-            Object.entries(data.headerForm).forEach(([k, v]) => {
-              const el = document.getElementById(k);
-              if (el) el.value = v;
-            });
-          }
-          if (data.clientForm) {
-            Object.entries(data.clientForm).forEach(([k, v]) => {
-              const el = document.getElementById(k);
-              if (el) el.value = v;
-            });
-          }
-          if (data.displayOptions) {
-            Object.entries(data.displayOptions).forEach(([k, v]) => {
-              const el = document.getElementById(k);
-              if (el && typeof v === 'boolean') el.checked = v;
-            });
-          }
-          if (Array.isArray(data.articles)) articles = data.articles;
-          if (Array.isArray(data.devisItems)) devisItems = data.devisItems;
-          renderArticles();
-          updateDevisTable();
-          updateDevisHeader();
-          updateDevisFooter();
-          saveData();
-        } catch (error) {
-          alert('Erreur lors de l\'importation du fichier.');
-          console.error(error);
-        }
-      };
-      reader.readAsText(fileImportTxt.files[0]);
-      fileImportTxt.value = '';
-    }
+    if (fileImportTxt.files.length === 0) return;
+    const file = fileImportTxt.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        localStorage.setItem('devisData', JSON.stringify(data));
+        restoreData();
+        alert('Configuration importée avec succès.');
+      } catch {
+        alert('Fichier invalide.');
+      }
+    };
+    reader.readAsText(file);
+    fileImportTxt.value = '';
   });
 
-  // Export PDF exact visuel via html2canvas + jsPDF
-  btnExportPDF.addEventListener('click', () => {
+  // Export PDF
+// Fonction d'exportation en PDF avec le fond de la bulle pris en compte
+btnExportPDF.addEventListener('click', () => {
     const devisElement = document.getElementById('devisContainer');
+    devisElement.classList.add('printMode');  // Appliquer un style d'impression pour améliorer la capture
 
-    // Ajoute la classe printMode pour cacher inputs, afficher spans, masquer croix rouge
-    devisElement.classList.add('printMode');
-
+    // Fonction de capture du style de l'élément
     function saveStyles(el, props) {
-      const styles = {};
-      props.forEach(p => { styles[p] = el.style[p]; });
-      return styles;
+        const styles = {};
+        props.forEach(p => { styles[p] = el.style[p]; });
+        return styles;
     }
+    
     function applyStyles(el, styles) {
-      Object.entries(styles).forEach(([k,v]) => { el.style[k] = v; });
+        Object.entries(styles).forEach(([k,v]) => { el.style[k] = v; });
     }
+    
     const propsToReset = ['height', 'maxHeight', 'overflow'];
 
     const elementsToExpand = [];
     let el = devisElement;
     while(el) {
-      elementsToExpand.push(el);
-      if(el.tagName === 'BODY') break;
-      el = el.parentElement;
+        elementsToExpand.push(el);
+        if(el.tagName === 'BODY') break;
+        el = el.parentElement;
     }
 
     const savedStyles = elementsToExpand.map(el => ({el, styles: saveStyles(el, propsToReset)}));
 
     elementsToExpand.forEach(el => {
-      el.style.height = 'auto';
-      el.style.maxHeight = 'none';
-      el.style.overflow = 'visible';
+        el.style.height = 'auto';
+        el.style.maxHeight = 'none';
+        el.style.overflow = 'visible';
     });
 
+    // Capture de l'élément pour l'exportation
     setTimeout(() => {
-      html2canvas(devisElement, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#fff",
-      }).then(canvas => {
-        savedStyles.forEach(({el, styles}) => applyStyles(el, styles));
+        html2canvas(devisElement, {
+            scale: 2,  // Haute résolution
+            useCORS: true,
+            backgroundColor: "#fff",  // Assurez-vous que le fond est blanc
+        }).then(canvas => {
+            savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
+            devisElement.classList.remove('printMode'); // Retirer le mode d'impression
 
-        // Retire la classe printMode après capture
-        devisElement.classList.remove('printMode');
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
 
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
-        const imgWidth = pdfWidth - 40;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const imgWidth = pdfWidth - 40;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        let heightLeft = imgHeight;
-        let position = 20;
+            let heightLeft = imgHeight;
+            let position = 20;
 
-        pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
+            pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
 
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight + 20;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-          heightLeft -= pdfHeight;
-        }
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight + 20;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
 
-        pdf.save('devis_exact_complet.pdf');
-      }).catch(err => {
-        savedStyles.forEach(({el, styles}) => applyStyles(el, styles));
-        devisElement.classList.remove('printMode');
-        alert('Erreur lors de la capture du devis : ' + err);
-      });
+            pdf.save('devis_complet.pdf');
+        }).catch(err => {
+            savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
+            devisElement.classList.remove('printMode'); // Retirer le mode d'impression
+            alert('Erreur lors de la capture du devis : ' + err);
+        });
     }, 100);
+});
+
+
+
+  // Collapsible sections toggling
+  document.querySelectorAll('#configPanel section h2').forEach(h2 => {
+    h2.addEventListener('click', () => {
+      h2.parentElement.classList.toggle('collapsed');
+    });
   });
 
-  document.addEventListener('DOMContentLoaded', () => {
+  // Initial load
+  window.addEventListener('DOMContentLoaded', () => {
     restoreData();
-    updateDevisHeader();
-    updateDevisFooter();
     renderArticles();
     updateDevisTable();
-
-    document.querySelectorAll('#configPanel section h2').forEach(header => {
-      header.addEventListener('click', () => {
-        header.parentElement.classList.toggle('collapsed');
-      });
-    });
+    updateDevisHeader();
+    updateClientInfo();
+    updateClientInfoVisibility();
+    updateDevisFooter();
+    updateSignatureLock();
+    updateAutoDateInfoVisibility();
+    renderSignatureArea();
   });
 </script>
 </body>
