@@ -19,14 +19,252 @@
   }
   body {
     font-family: var(--font-family);
-    background: #f4f7fa;
+    background-color: #2d2d2e;
+    color: #d0d0d0;
     margin: 0;
     display: flex;
     min-height: 100vh;
     user-select: none;
   }
+  /* Mode sombre avancé spécifique au panel #configPanel */
+
+#configPanel {
+  background-color: #1e1e1e !important;
+  color: #d0d0d0 !important;
+  border: 1px solid #444 !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.7) !important;
+}
+
+#configPanel h2 {
+  color: #5dade2 !important;  /* un bleu clair pour les titres */
+  border-bottom-color: #5dade2 !important;
+}
+
+#configPanel label {
+  color: #aab7c4 !important;
+}
+
+#configPanel input[type="text"],
+#configPanel input[type="email"],
+#configPanel input[type="date"],
+#configPanel input[type="number"],
+#configPanel textarea,
+#configPanel select {
+  background-color: #333 !important;
+  color: #eee !important;
+  border: 1.5px solid #555 !important;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#configPanel input[type="text"]:focus,
+#configPanel input[type="email"]:focus,
+#configPanel input[type="date"]:focus,
+#configPanel input[type="number"]:focus,
+#configPanel textarea:focus,
+#configPanel select:focus {
+  background-color: #444 !important;
+  border-color: #5dade2 !important;
+  outline: none;
+  color: #fff !important;
+}
+
+#configPanel button {
+  background-color: #2874a6 !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(40, 116, 166, 0.7) !important;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#configPanel button:hover,
+#configPanel button:focus {
+  background-color: #1b4a7a !important;
+  box-shadow: 0 4px 12px rgba(27, 74, 122, 0.9) !important;
+  outline: none;
+}
+
+/* Scrollbar du panel */
+#configPanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+#configPanel::-webkit-scrollbar-track {
+  background: #222;
+}
+
+#configPanel::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+  border: 2px solid #222;
+}
+
+/* Panel édition article (cadre bleu clair) en mode sombre */
+#articleEditGlobal {
+  background-color: #2a2a2a !important; /* gris foncé */
+  color: #d0d0d0 !important;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+  max-width: 400px;
+  margin-bottom: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Titres et labels */
+#articleEditGlobal h3 {
+  color: #5dade2 !important; /* bleu clair */
+  margin-top: 0;
+  font-weight: 700;
+  user-select: none;
+}
+
+#articleEditGlobal label {
+  color: #aab7c4 !important;
+  font-weight: 600;
+  display: block;
+  margin-top: 12px;
+}
+
+/* Inputs et textarea */
+#articleEditGlobal textarea,
+#articleEditGlobal input[type="number"] {
+  background-color: #1e1e1e !important;
+  color: #ddd !important;
+  border: 1.5px solid #555 !important;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#articleEditGlobal textarea:focus,
+#articleEditGlobal input[type="number"]:focus {
+  background-color: #333 !important;
+  border-color: #5dade2 !important;
+  outline: none;
+  color: #fff !important;
+}
+
+/* Bouton Enregistrer */
+#saveGlobalEditBtn {
+  background-color: #2874a6 !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+
+#saveGlobalEditBtn:hover,
+#saveGlobalEditBtn:focus {
+  background-color: #1b4a7a !important;
+  outline: none;
+}
+
+/* Liste articles container */
+#articlesList {
+  background-color: #1e1e1e !important;
+  border-radius: 8px;
+  padding: 10px;
+  max-width: 400px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+  overflow-y: auto;
+  max-height: 320px;
+}
+.articleLine:last-child {
+  margin-bottom: 0;
+}
+/* Ligne article */
+.articleLine {
+  background-color: #2a2a2a !important;
+  color: #d0d0d0 !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: default;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.articleLine:hover {
+  background-color: #3a3a3a !important;
+}
+
+/* Ref label */
+.refLabel {
+  flex-grow: 1;
+  font-weight: 700;
+  color: #5dade2 !important; /* bleu clair */
+  user-select: text;
+}
+
+/* Boutons + et × */
+.articleLine > button {
+  background-color: #2874a6 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.articleLine > button:hover {
+  background-color: #1b4a7a !important;
+  outline: none;
+}
+
+/* Badge info (i) */
+.infoBadge {
+  background-color: #2874a6 !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  border-radius: 12px !important;
+  cursor: default !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  align-self: center !important;
+  margin-left: 6px;
+}
+#articlesList::-webkit-scrollbar {
+  width: 8px;
+}
+
+#articlesList::-webkit-scrollbar-track {
+  background: #121212; /* fond de la track bien sombre */
+  border-radius: 8px;
+}
+
+#articlesList::-webkit-scrollbar-thumb {
+  background-color: #555; /* pouce gris foncé */
+  border-radius: 8px;
+  border: 2px solid #121212; /* bordure qui épouse la track */
+}
+
+
+
+  
+  
 #logoContainer {
-margin-right: -50px;
+/* margin-right: -50px; */
   /* width: 180px;    largeur fixe, modifie à ta convenance */
   /* height: 180px;   hauteur fixe */
   display: flex;
@@ -155,7 +393,7 @@ margin-right: -50px;
     font-family: var(--font-family);
   }
   #configPanel button {
-    margin-top: 12px;
+    margin-top: 0px;
     padding: 7px 14px;
     background: var(--secondary-color);
     color: white;
@@ -192,18 +430,63 @@ margin-right: -50px;
   overflow-x: auto; /* Active la barre de défilement horizontale */
 }
   /* En-tête style demandé */
-  #devisHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background: #fff;
-    padding: 15px 20px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    font-size: 12px;
-    color: #555;
-    line-height: 1.3;
-  }
+#devisHeader {
+  display: flex;
+  justify-content: space-evenly; /* Toujours aligné à gauche */
+  align-items: flex-start;
+  gap: 71.1px;
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  font-size: 12px;
+  color: #555;
+  line-height: 1.3;
+  transition: all 0.3s ease;
+  align-items: center;
+}
+
+/* Logo visible */
+#devisHeader.withLogo #logoContainer {
+  display: block;
+  flex-shrink: 0;
+  max-width: 230px;
+}
+#devisHeader.withLogo #logoImage {
+  max-height: 200px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Logo caché */
+#devisHeader.noLogo #logoContainer {
+  display: none;
+}
+
+/* Gestion largeur blocs quand pas de logo */
+#devisHeader.noLogo #headerLeft {
+  flex-grow: 1;
+  max-width: none;
+  text-align: left;
+}
+
+#devisHeader.noLogo #headerRight {
+  max-width: none;     /* augmente la largeur max (avant c'était 300px) */
+  text-align: right;     /* texte aligné à gauche comme sur ta première image */
+  margin-left: auto;    /* pousse le bloc à droite */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+#articlesList {
+  max-height: 150px;   /* hauteur max avant scroll */
+  overflow-y: auto;    /* scroll vertical automatique */
+  border: 1px solid #ccc; /* optionnel, pour mieux voir la zone */
+  padding: 5px;          /* optionnel, espace interne */
+  background: #fafafa;   /* optionnel, fond clair */
+  border-radius: 6px;    /* optionnel, coins arrondis */
+}
   #headerLeft {
     max-width: 65%;
   }
@@ -332,16 +615,16 @@ margin-right: -50px;
   }
   #devisBody table th:nth-child(2),
   #devisBody table tbody td:nth-child(2) {
-    width: 5%;
+    width: 14%;
   }
   #devisBody table th:nth-child(3),
   #devisBody table tbody td:nth-child(3) {
-    width: 5%;
+    width: 7%;
     text-align: right;
   }
   #devisBody table th:nth-child(4),
   #devisBody table tbody td:nth-child(4) {
-    width: 5%;
+    width: 6%;
     text-align: right;
   }
   #devisBody table th:nth-child(5),
@@ -549,6 +832,109 @@ margin-right: -50px;
     width: 320px;
     height: 100px;
   }
+.articleContainer {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  user-select: text;
+}
+.articleLine {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0px 0px;      /* padding vertical plus grand => ligne plus haute */
+  cursor: pointer;
+  user-select: none;
+  /* background: #cce4f7;     fond bleu clair */
+  /* border-radius: 6px 6px 0 0; */
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 0.1rem;       /* texte plus grand */
+  min-height: 20px;        /* hauteur minimale pour la ligne */
+}
+
+.articleLine .infoBadge {
+  background-color: #2874a6;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 12px;
+  margin-left: 6px;
+  user-select: none;
+  cursor: default;
+  white-space: nowrap;
+  align-self: center;
+}
+
+
+.articleLine:hover {
+  background: #d3e1fa;
+}
+.articleLine > .refLabel {
+  /* background-color: var(--primary-color); */
+  /* color: white; */
+  padding: 10px 20px;  /* padding plus grand pour augmenter la hauteur */
+  border-radius: 8px;
+  min-width: 100px;
+  text-align: center;
+  font-size: 1rem;  /* augmente la taille du texte */
+  font-weight: 200;
+  user-select: text;
+  line-height: 1;
+}
+.articleLine > button {
+  width: 40px;            /* boutons plus gros */
+  height: 36px;
+  font-weight: 700;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  font-size: 0.01rem;      /* texte plus grand dans les boutons */
+}
+.articleLine > button:hover,
+.articleLine > button:focus {
+  background: #0f2a43;
+  outline: none;
+}
+.articleEditPanel {
+  padding: 11px 16px 15px 16px;
+  background: #fff;
+  border-top: 1px solid #ccc;
+  border-radius: 0 0 6px 6px;
+  display: none;
+  user-select: text;
+}
+.articleEditPanel textarea {
+  width: 100%;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 60px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1.4px solid #ccc;
+  margin-bottom: 9px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+.articleEditPanel .inputsRow {
+  display: flex;
+  gap: 12px;
+}
+.articleEditPanel .inputsRow input {
+  font-size: 0.9rem;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1.4px solid #ccc;
+  width: 100px;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
 
   @media (max-width: 960px) {
     #container {
@@ -640,20 +1026,35 @@ Ce devis est valable 30 jours à partir de la date d'émission.</textarea>
 </section>
 
 
-    <section id="sectionArticles" class="collapsed">
-      <h2>Articles disponibles</h2>
-      <div id="articlesList" aria-label="Liste des articles disponibles"></div>
-      <h3 style="margin:10px 0 4px 0;">Ajouter un nouvel article</h3>
-      <form id="addArticleForm" spellcheck="false" aria-label="Formulaire d'ajout d'article">
-        <label for="newDesc">Designation :</label>
-        <textarea id="newDesc" required rows="3" style="width:100%; resize: vertical;" placeholder="Nom de l'article"></textarea>
-        <label for="newPrice">Prix unitaire HT (€) :</label>
-        <input type="number" id="newPrice" required min="0" step="0.01" placeholder="Ex: 25.50" />
-        <label for="newTva">TVA (%) :</label>
-        <input type="number" id="newTva" required min="0" max="100" step="0.01" placeholder="20" value="20" />
-        <button type="submit" id="addArticleBtn">Ajouter l'article</button>
-      </form>
-    </section>
+<section id="sectionArticles" class="collapsed">
+  <h2>Articles disponibles</h2>
+  <div id="articleEditGlobal" style="border: 1px solid #ccc; padding: 12px; margin-bottom: 12px; background: #f0f8ff; border-radius: 6px; display: none;">
+  <h3>Édition article</h3>
+  <label>Désignation :</label><br />
+  <textarea id="globalDesc" rows="3" style="width: 100%;"></textarea><br />
+  <label>Prix HT (€) :</label>
+  <input type="number" id="globalPrice" step="0.01" min="0" style="width: 120px;" />
+  <label>TVA (%) :</label>
+  <input type="number" id="globalTva" step="0.01" min="0" max="100" style="width: 80px;" />
+  <button id="saveGlobalEditBtn" style="margin-top: 10px;">Enregistrer</button>
+</div>
+
+  <div id="articlesList" aria-label="Liste des articles disponibles"></div>
+  <h3 style="margin: 10px 0 6px 0;">Ajouter un nouvel article</h3>
+  <form id="addArticleForm" spellcheck="false" aria-label="Formulaire d'ajout d'article">
+    <label for="newDesc">Désignation :</label>
+    <textarea id="newDesc" required rows="3" style="width:100%; resize: vertical;" placeholder="Nom de l'article"></textarea>
+    <label for="newPrice">Prix unitaire HT (€) :</label>
+    <input type="number" id="newPrice" required min="0" step="0.01" placeholder="Ex: 25.50" />
+    <label for="newTva">TVA (%) :</label>
+    <input type="number" id="newTva" required min="0" max="100" step="0.01" placeholder="20" value="20" />
+      <label for="newInfo">Info (optionnel) :</label>
+  <input type="text" id="newInfo" placeholder="Note ou info rapide" style="width: 100%; margin-bottom: 10px;" />
+
+
+    <button type="submit" id="addArticleBtn">Ajouter l'article</button>
+  </form>
+</section>
 
     <section id="sectionSignature" class="collapsed">
       <h2>Signature</h2>
@@ -699,6 +1100,9 @@ Signature et cachet</textarea>
 
       <div id="headerLeft">
         <h2 id="devisTitleDisplay">DEVIS</h2>
+
+
+        
         <strong id="companyNameDisplay">Mon Entreprise SARL</strong>
         <div id="companyAddressDisplay">123 Rue de l'Exemple, 75000 Paris</div>
         <div id="companyPhoneDisplay">01 23 45 67 89</div>
@@ -781,6 +1185,9 @@ Signature et cachet</textarea>
 
 <script>
   // DOM elements
+  const devisHeader = document.getElementById('devisHeader');
+  const newInfoInput = document.getElementById('newInfo');
+
   const devisTitleInput = document.getElementById('devisTitle');
   const companyNameInput = document.getElementById('companyName');
   const companyAddressInput = document.getElementById('companyAddress');
@@ -855,22 +1262,27 @@ Signature et cachet</textarea>
 
   // === Fonctions de mise à jour ===
 
-  function updateDevisHeader() {
-    companyNameDisplay.textContent = companyNameInput.value || '';
-    companyAddressDisplay.textContent = companyAddressInput.value || '';
-    companyPhoneDisplay.textContent = companyPhoneInput.value || '';
-    companyEmailDisplay.textContent = companyEmailInput.value || '';
-    companySiretDisplay.textContent = companySiretInput.value || '';
-    companyTvaDisplay.textContent = companyTvaInput.value || '';
-    if (dateInput.value) {
-      const d = new Date(dateInput.value);
-      const formatted = d.toLocaleDateString('fr-FR');
-      dateDisplay.textContent = 'Date : ' + formatted;
-    } else {
-      dateDisplay.textContent = 'Date : ';
-    }
-    devisTitleDisplay.textContent = devisTitleInput.value || '';
+function updateDevisHeader() {
+  companyNameDisplay.textContent = companyNameInput.value || '';
+  companyAddressDisplay.textContent = companyAddressInput.value || '';
+  companyPhoneDisplay.textContent = companyPhoneInput.value || '';
+  companyEmailDisplay.textContent = companyEmailInput.value || '';
+  companySiretDisplay.textContent = companySiretInput.value || '';
+  companyTvaDisplay.textContent = companyTvaInput.value || '';
+  devisTitleDisplay.textContent = devisTitleInput.value || '';
+
+  if (showLogoCheckbox.checked && logoImage.src) {
+    logoImage.style.display = 'block';
+    devisHeader.classList.add('withLogo');
+    devisHeader.classList.remove('noLogo');
+  } else {
+    logoImage.style.display = 'none';
+    devisHeader.classList.add('noLogo');
+    devisHeader.classList.remove('withLogo');
   }
+}
+
+
 
   function updateClientInfo() {
     let fullName = (clientFirstNameInput.value + ' ' + clientLastNameInput.value).trim();
@@ -1198,80 +1610,103 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // === Gestion articles ===
 
-  function renderArticles() {
-    articlesList.innerHTML = '';
-    articles.forEach((art, i) => {
-      const div = document.createElement('div');
-      div.className = 'articleItem';
+let currentEditingIndex = null;
 
-      const descInput = document.createElement('textarea');
-      descInput.value = art.desc;
-      descInput.className = 'descInput';
-      descInput.rows = 3;
-      descInput.style.width = '100%';
-      descInput.style.resize = 'vertical';
-      descInput.placeholder = "Designation";
-      descInput.addEventListener('input', () => {
-        articles[i].desc = descInput.value;
-        saveData();
-      });
+function renderArticles() {
+  articlesList.innerHTML = '';
+  articles.forEach((art, i) => {
+    const container = document.createElement('div');
+    container.className = 'articleContainer';
 
-      const priceInput = document.createElement('input');
-      priceInput.type = 'number';
-      priceInput.min = 0;
-      priceInput.step = 0.01;
-      priceInput.value = art.price.toFixed(2);
-      priceInput.className = 'priceInput';
-      priceInput.addEventListener('input', () => {
-        let val = parseFloat(priceInput.value);
-        articles[i].price = isNaN(val) ? 0 : val;
-        saveData();
-      });
+    const line = document.createElement('div');
+    line.className = 'articleLine';
 
-      const tvaInput = document.createElement('input');
-      tvaInput.type = 'number';
-      tvaInput.min = 0;
-      tvaInput.max = 100;
-      tvaInput.step = 0.01;
-      tvaInput.value = art.tva !== undefined ? art.tva : 20;
-      tvaInput.className = 'tvaInput';
-      tvaInput.title = 'TVA (%)';
-      tvaInput.addEventListener('input', () => {
-        let val = parseFloat(tvaInput.value);
-        articles[i].tva = isNaN(val) ? 20 : val;
-        saveData();
-      });
+    const refLabel = document.createElement('span');
+    refLabel.className = 'refLabel';
+    refLabel.textContent = `Ref ${String(i + 1).padStart(4, '0')}`;
 
-      const addBtn = document.createElement('button');
-      addBtn.textContent = '+';
-      addBtn.className = 'addToDevisBtn';
-      addBtn.title = 'Ajouter cet article au devis';
-      addBtn.addEventListener('click', () => {
-        addItemToDevis(1, art.price, art.tva, art.desc);
-        saveData();
-      });
-
-      const removeBtn = document.createElement('button');
-      removeBtn.textContent = '×';
-      removeBtn.className = 'removeArticleBtn';
-      removeBtn.title = 'Supprimer cet article';
-      removeBtn.addEventListener('click', () => {
-        if (confirm(`Supprimer l'article "${art.desc}" ?`)) {
-          articles.splice(i, 1);
-          renderArticles();
-          updateDevisTable();
-          saveData();
-        }
-      });
-
-      div.appendChild(descInput);
-      div.appendChild(priceInput);
-      div.appendChild(tvaInput);
-      div.appendChild(addBtn);
-      div.appendChild(removeBtn);
-      articlesList.appendChild(div);
+    const btnAdd = document.createElement('button');
+    btnAdd.textContent = '+';
+    btnAdd.title = 'Ajouter au devis';
+    btnAdd.addEventListener('click', e => {
+      e.stopPropagation();
+      addItemToDevis(1, art.price, art.tva, art.desc);
     });
+
+    const btnRemove = document.createElement('button');
+    btnRemove.textContent = '×';
+    btnRemove.title = 'Supprimer article';
+    btnRemove.addEventListener('click', e => {
+      e.stopPropagation();
+      if(confirm(`Supprimer l'article "${art.desc}" ?`)) {
+        articles.splice(i, 1);
+        renderArticles();
+        updateDevisTable();
+        saveData();
+        hideGlobalEditor();
+      }
+    });
+
+const infoBadge = document.createElement('span');
+infoBadge.className = 'infoBadge';
+infoBadge.textContent = 'i';  // petite icône texte ou remplace par SVG
+infoBadge.title = art.info || 'Pas d\'info';  // Tooltip avec la note
+
+// Si tu veux, tu peux ajouter un style cursor pointer si info présente
+if (art.info) {
+  infoBadge.style.cursor = 'pointer';
+} else {
+  infoBadge.style.opacity = '0.3';  // un peu grisé si pas d'info
+}
+line.appendChild(refLabel);
+line.appendChild(btnAdd);
+line.appendChild(btnRemove);
+line.appendChild(infoBadge);
+
+
+    // Au clic sur la ligne, on affiche dans le bloc global
+    line.addEventListener('click', () => {
+      currentEditingIndex = i;
+      showGlobalEditor(art);
+    });
+
+    container.appendChild(line);
+    articlesList.appendChild(container);
+  });
+}
+
+// Affiche le bloc global et remplit les champs
+function showGlobalEditor(article) {
+  document.getElementById('articleEditGlobal').style.display = 'block';
+  document.getElementById('globalDesc').value = article.desc;
+  document.getElementById('globalPrice').value = article.price.toFixed(2);
+  document.getElementById('globalTva').value = article.tva;
+}
+
+// Cache le bloc global
+function hideGlobalEditor() {
+  document.getElementById('articleEditGlobal').style.display = 'none';
+  currentEditingIndex = null;
+}
+
+// Sauvegarde les modifications du bloc global dans l'article correspondant
+document.getElementById('saveGlobalEditBtn').addEventListener('click', () => {
+  if(currentEditingIndex === null) return;
+  const desc = document.getElementById('globalDesc').value.trim();
+  const price = parseFloat(document.getElementById('globalPrice').value);
+  const tva = parseFloat(document.getElementById('globalTva').value);
+  if(!desc || isNaN(price) || isNaN(tva)) {
+    alert('Veuillez remplir tous les champs correctement.');
+    return;
   }
+  articles[currentEditingIndex].desc = desc;
+  articles[currentEditingIndex].price = price;
+  articles[currentEditingIndex].tva = tva;
+  saveData();
+  renderArticles();
+  hideGlobalEditor();
+});
+
 
   function addItemToDevis(qty, price, tva, desc) {
     const existing = devisItems.find(item => item.desc === desc);
@@ -1554,22 +1989,29 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // Formulaire ajout article
-  addArticleForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const desc = newDescInput.value.trim();
-    const price = parseFloat(newPriceInput.value);
-    const tva = parseFloat(newTvaInput.value);
-    if (!desc || isNaN(price) || isNaN(tva)) {
-      alert('Veuillez remplir tous les champs correctement.');
-      return;
-    }
-    articles.push({ desc, price, tva });
-    renderArticles();
-    newDescInput.value = '';
-    newPriceInput.value = '';
-    newTvaInput.value = '20';
-    saveData();
-  });
+addArticleForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const desc = newDescInput.value.trim();
+  const price = parseFloat(newPriceInput.value);
+  const tva = parseFloat(newTvaInput.value);
+  const info = newInfoInput.value.trim();   // Récupère la nouvelle info
+
+  if (!desc || isNaN(price) || isNaN(tva)) {
+    alert('Veuillez remplir tous les champs correctement.');
+    return;
+  }
+
+  articles.push({ desc, price, tva, info });  // Ajoute info à l'objet article
+
+  renderArticles();
+
+  newDescInput.value = '';
+  newPriceInput.value = '';
+  newTvaInput.value = '20';
+  newInfoInput.value = '';        // Vide le champ info
+  saveData();
+});
+
 
   // Export config TXT
   btnExportTxt.addEventListener('click', () => {
