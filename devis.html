@@ -1674,6 +1674,7 @@ function renderArticles() {
     line.style.position = 'relative';
 
     const btnAdd = document.createElement('button');
+    btnAdd.type = 'button'; 
     btnAdd.textContent = '+';
     btnAdd.title = 'Ajouter au devis';
     btnAdd.addEventListener('click', e => {
@@ -2088,20 +2089,19 @@ addArticleForm.addEventListener('submit', e => {
   const tva = parseFloat(newTvaInput.value);
   const info = newInfoInput.value.trim();   // Récupère la nouvelle info
 
-  if (!desc || isNaN(price) || isNaN(tva)) {
-    alert('Veuillez remplir tous les champs correctement.');
+  if(!desc || isNaN(price) || isNaN(tva)) {
+    alert('Veuillez remplir correctement tous les champs.');
     return;
   }
-
   articles.push({ desc, price, tva, info });  // Ajoute info à l'objet article
 
   renderArticles();
 
+  saveData();
   newDescInput.value = '';
   newPriceInput.value = '';
   newTvaInput.value = '20';
   newInfoInput.value = '';        // Vide le champ info
-  saveData();
 });
 
 
