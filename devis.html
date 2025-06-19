@@ -19,7 +19,7 @@
   }
   body {
     font-family: var(--font-family);
-/*     background-color: #2d2d2e; */
+    background-color: #2d2d2e;
     color: #d0d0d0;
     margin: 0;
     display: flex;
@@ -1090,13 +1090,22 @@ Signature et cachet</textarea>
       </div>
     </section>
 
-    <section>
-      <h2>Export / Import configuration</h2>
-      <div style="display:flex; gap:8px; flex-wrap: wrap;">
-        <button id="btnExportTxt" style="flex-grow:1;">Exporter config en TXT</button>
-        <input type="file" id="fileImportTxt" accept=".txt,text/plain" style="flex-grow:1;" />
-        <button id="btnExportPDF" style="flex-grow:1;">Exporter en PDF</button>
-      </div>
+
+<section>
+  <h2>Export / Import configuration</h2>
+
+  <label for="fileNameInput" style="display:block; margin-bottom: 6px; font-weight: 600;">
+    Nom du fichier à exporter :
+  </label>
+  <input type="text" id="fileNameInput" placeholder="exemple_devis" style="width: 100%; padding: 6px; margin-bottom: 12px; box-sizing: border-box;" />
+
+  <div style="display:flex; gap:8px; flex-wrap: wrap;">
+    <button id="btnExportTxt" style="flex-grow:1;">Exporter config en TXT</button>
+    <input type="file" id="fileImportTxt" accept=".txt,text/plain" style="flex-grow:1;" />
+    <button id="btnExportPDF" style="flex-grow:1;">Exporter en PDF</button>
+  </div>
+</section>
+
     </section>
   </aside>
 
@@ -1243,6 +1252,7 @@ if(addArticleTitle) {
   const newPriceInput = document.getElementById('newPrice');
   const newTvaInput = document.getElementById('newTva');
   const tbody = document.querySelector('#devisBody tbody');
+  const fileNameInput = document.getElementById('fileNameInput');
   const btnExportTxt = document.getElementById('btnExportTxt');
   const fileImportTxt = document.getElementById('fileImportTxt');
   const btnExportPDF = document.getElementById('btnExportPDF');
@@ -2106,115 +2116,140 @@ addArticleForm.addEventListener('submit', e => {
 
 
   // Export config TXT
-  btnExportTxt.addEventListener('click', () => {
-    const data = localStorage.getItem('devisData');
-    if (!data) {
-      alert('Aucune configuration sauvegardée.');
-      return;
-    }
-    const blob = new Blob([data], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'devis_config.txt';
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+btnExportTxt.addEventListener('click', () => {
+  const data = localStorage.getItem('devisData');
+  if (!data) {
+    alert('Aucune configuration sauvegardée.');
+    return;
+  }
 
-  // Import config TXT
-  fileImportTxt.addEventListener('change', () => {
-    if (fileImportTxt.files.length === 0) return;
-    const file = fileImportTxt.files[0];
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const data = JSON.parse(e.target.result);
-        localStorage.setItem('devisData', JSON.stringify(data));
-        restoreData();
-        alert('Configuration importée avec succès.');
-      } catch {
-        alert('Fichier invalide.');
-      }
-    };
-    reader.readAsText(file);
-    fileImportTxt.value = '';
-  });
+  // Récupère le nom de fichier dans le champ input
+  let fileName = fileNameInput.value.trim();
+  if (!fileName) {
+    alert('Merci de saisir un nom de fichier');
+    return;
+  }
+  if (!fileName.endsWith('.txt')) {
+    fileName += '.txt';
+  }
+
+  const blob = new Blob([data], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;  // Utilise le nom personnalisé ici
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Import config TXT - inchangé
+fileImportTxt.addEventListener('change', () => {
+  if (fileImportTxt.files.length === 0) return;
+  const file = fileImportTxt.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      localStorage.setItem('devisData', JSON.stringify(data));
+      restoreData();
+      alert('Configuration importée avec succès.');
+    } catch {
+      alert('Fichier invalide.');
+    }
+  };
+  reader.readAsText(file);
+  fileImportTxt.value = '';
+});
+
+
+  
 
   // Export PDF
 // Fonction d'exportation en PDF avec le fond de la bulle pris en compte
 btnExportPDF.addEventListener('click', () => {
-    const devisElement = document.getElementById('devisContainer');
-    devisElement.classList.add('printMode');  // Appliquer un style d'impression pour améliorer la capture
+  const fileNameInputValue = fileNameInput.value.trim();
 
-    // Fonction de capture du style de l'élément
-    function saveStyles(el, props) {
-        const styles = {};
-        props.forEach(p => { styles[p] = el.style[p]; });
-        return styles;
-    }
-    
-    function applyStyles(el, styles) {
-        Object.entries(styles).forEach(([k,v]) => { el.style[k] = v; });
-    }
-    
-    const propsToReset = ['height', 'maxHeight', 'overflow'];
+  if (!fileNameInputValue) {
+    alert('Merci de saisir un nom de fichier');
+    return;
+  }
 
-    const elementsToExpand = [];
-    let el = devisElement;
-    while(el) {
-        elementsToExpand.push(el);
-        if(el.tagName === 'BODY') break;
-        el = el.parentElement;
-    }
+  // Ajoute l'extension .pdf si nécessaire
+  let fileName = fileNameInputValue.toLowerCase().endsWith('.pdf') ? fileNameInputValue : fileNameInputValue + '.pdf';
 
-    const savedStyles = elementsToExpand.map(el => ({el, styles: saveStyles(el, propsToReset)}));
+  const devisElement = document.getElementById('devisContainer');
+  devisElement.classList.add('printMode');  // Appliquer un style d'impression pour améliorer la capture
 
-    elementsToExpand.forEach(el => {
-        el.style.height = 'auto';
-        el.style.maxHeight = 'none';
-        el.style.overflow = 'visible';
+  // Fonction de capture du style de l'élément
+  function saveStyles(el, props) {
+    const styles = {};
+    props.forEach(p => { styles[p] = el.style[p]; });
+    return styles;
+  }
+
+  function applyStyles(el, styles) {
+    Object.entries(styles).forEach(([k,v]) => { el.style[k] = v; });
+  }
+
+  const propsToReset = ['height', 'maxHeight', 'overflow'];
+
+  const elementsToExpand = [];
+  let el = devisElement;
+  while(el) {
+    elementsToExpand.push(el);
+    if(el.tagName === 'BODY') break;
+    el = el.parentElement;
+  }
+
+  const savedStyles = elementsToExpand.map(el => ({el, styles: saveStyles(el, propsToReset)}));
+
+  elementsToExpand.forEach(el => {
+    el.style.height = 'auto';
+    el.style.maxHeight = 'none';
+    el.style.overflow = 'visible';
+  });
+
+  // Capture de l'élément pour l'exportation
+  setTimeout(() => {
+    html2canvas(devisElement, {
+      scale: 2,  // Haute résolution
+      useCORS: true,
+      backgroundColor: "#fff",  // Assurez-vous que le fond est blanc
+    }).then(canvas => {
+      savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
+      devisElement.classList.remove('printMode'); // Retirer le mode d'impression
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = pdfWidth - 40;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 20;
+
+      pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + 20;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
+      pdf.save(fileName); // Utilise le nom personnalisé ici
+    }).catch(err => {
+      savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
+      devisElement.classList.remove('printMode'); // Retirer le mode d'impression
+      alert('Erreur lors de la capture du devis : ' + err);
     });
-
-    // Capture de l'élément pour l'exportation
-    setTimeout(() => {
-        html2canvas(devisElement, {
-            scale: 2,  // Haute résolution
-            useCORS: true,
-            backgroundColor: "#fff",  // Assurez-vous que le fond est blanc
-        }).then(canvas => {
-            savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
-            devisElement.classList.remove('printMode'); // Retirer le mode d'impression
-
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jspdf.jsPDF('p', 'pt', 'a4');
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-
-            const imgWidth = pdfWidth - 40;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            let heightLeft = imgHeight;
-            let position = 20;
-
-            pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-            heightLeft -= pdfHeight;
-
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight + 20;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                heightLeft -= pdfHeight;
-            }
-
-            pdf.save('devis_complet.pdf');
-        }).catch(err => {
-            savedStyles.forEach(({el, styles}) => applyStyles(el, styles)); // Restaure les styles d'origine
-            devisElement.classList.remove('printMode'); // Retirer le mode d'impression
-            alert('Erreur lors de la capture du devis : ' + err);
-        });
-    }, 100);
+  }, 100);
 });
+
 
 
 
@@ -2224,6 +2259,7 @@ btnExportPDF.addEventListener('click', () => {
       h2.parentElement.classList.toggle('collapsed');
     });
   });
+
 
   // Initial load
   window.addEventListener('DOMContentLoaded', () => {
@@ -2238,6 +2274,9 @@ btnExportPDF.addEventListener('click', () => {
     updateAutoDateInfoVisibility();
     renderSignatureArea();
   });
+
+
+
 </script>
 </body>
 </html>
