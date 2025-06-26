@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gestion Heures Supplémentaires complète avec horaires en 1 colonne</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121722;
+    color: #e0e7ff;
+    margin: 20px;
+    line-height: 1.5;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  }
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px 25px;
+    margin-bottom: 30px;
+  }
+  label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #94a3b8;
+    user-select: none;
+    display: block;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1.5px solid #334155;
+    background: #0f172a;
+    color: #cbd5e1;
+    transition: border-color 0.3s ease;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #1e293b;
+  }
+  button[type="submit"] {
+    grid-column: 1 / -1;
+    background-color: #6366f1;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(99,102,241,0.6);
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button[type="submit"]:hover {
+    background-color: #4f46e5;
+  }
+  .month-totals-container {
+    background-color: #334155;
+    border-radius: 12px;
+    padding: 18px 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+    margin-bottom: 25px;
+  }
+  .month-totals-container .table-wrapper {
+    overflow-x: auto;
+    max-height: 140px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+  }
+  .month-totals-container table {
+    background: transparent;
+    color: #e0e7ff;
+    min-width: 800px;
+    border-collapse: collapse;
+  }
+  .month-totals-container thead tr {
+    background-color: transparent;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .month-totals-container tbody tr {
+    background-color: #475569;
+    font-weight: 700;
+    color: #e0e7ff;
+  }
+  .filter-month {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .filter-month label {
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+  select#monthFilter {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #334155;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    min-width: 150px;
+  }
+  select#monthFilter:hover, select#monthFilter:focus {
+    border-color: #6366f1;
+    outline: none;
+  }
+  .week-selector-container {
+    margin-bottom: 20px;
+  }
+  .week-selector-container label {
+    font-weight: 600;
+    color: #cbd5e1;
+    user-select: none;
+    margin-right: 10px;
+  }
+  #weekSelector {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #334155;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    min-width: 250px;
+  }
+  #weekSelector:hover, #weekSelector:focus {
+    border-color: #6366f1;
+    outline: none;
+  }
+  #justificationContainer {
+    grid-column: 1 / -1;
+  }
+  .week-table {
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 40px;
+    background: #1e293b;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+  }
+  .week-header {
+    background-color: #334155;
+    padding: 14px 18px;
+    border-radius: 12px 12px 0 0;
+    font-weight: 700;
+    font-size: 18px;
+    color: #e0e7ff;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+  }
+  .week-header::after {
+    content: "▼";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
+  }
+  .week-header.closed::after {
+    transform: translateY(-50%) rotate(-90deg);
+    content: "▶";
+  }
+  .table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    border-radius: 0 0 12px 12px;
+  }
+  table {
+    width: 100%;
+    min-width: 1150px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+    color: #cbd5e1;
+  }
+  thead tr {
+    background-color: #475569;
+    font-weight: 600;
+    color: #e0e7ff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #334155;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  tbody tr:nth-child(even) {
+    background-color: #1e293b;
+  }
+  tbody tr:hover {
+    background-color: #334155;
+  }
+  tfoot tr {
+    background-color: #475569;
+    font-weight: 700;
+    color: #e0e7ff;
+  }
+  button.delete-row {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-weight: 900;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.25s ease;
+  }
+  button.delete-row:hover {
+    color: #b91c1c;
+  }
+  span.tooltip-icon {
+    cursor: help;
+    margin-left: 6px;
+    font-weight: 700;
+  }
+  .week-table.closed .table-wrapper {
+    display: none;
+  }
+  /* Scrollbars sombres Chrome, Edge, Safari */
+  .table-wrapper::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .table-wrapper::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #475569;
+    border-radius: 10px;
+    border: 2px solid #0f172a;
+  }
+  /* Scrollbars Firefox */
+  .table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #0f172a;
+  }
+  @media(max-width: 900px) {
+    table {
+      min-width: 900px;
+    }
+  }
+  @media(max-width: 600px) {
+    table {
+      min-width: 600px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Gestion des Heures Supplémentaires complète avec horaires en 1 colonne</h1>
+
+  <div class="month-totals-container">
+    <div class="table-wrapper">
+      <table aria-label="Totaux mensuels" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Normales (h)</th>
+            <th>Sup. 25% (h)</th>
+            <th>Sup. 50% (h)</th>
+            <th>Total heures (h)</th>
+            <th>Panier (€)</th>
+            <th>Indemnité (€)</th>
+            <th>Brut (€)</th>
+            <th>Net (€)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="text-align:center;">
+            <td id="totalNormal">0.00</td>
+            <td id="totalOver25">0.00</td>
+            <td id="totalOver50">0.00</td>
+            <td id="totalHeures">0.00</td>
+            <td id="totalPanier">0.00</td>
+            <td id="totalIndemnite">0.00</td>
+            <td id="totalBrut">0.00</td>
+            <td id="totalNet">0.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="filter-month">
+    <label for="monthFilter">Filtrer par mois</label>
+    <select id="monthFilter" aria-label="Filtrer les données par mois"></select>
+  </div>
+
+  <div class="week-selector-container">
+    <label for="weekSelector">Choisir une semaine</label>
+    <select id="weekSelector" aria-label="Filtrer les données par semaine"></select>
+  </div>
+
+  <div id="weeksContainer" aria-live="polite"></div>
+
+  <div style="display:flex; gap:15px; margin-bottom:25px;">
+    <button id="exportBtn" style="
+      background:#4ade80; color:#064e3b; font-weight:700; border:none; padding:10px 20px; border-radius:12px; cursor:pointer;
+    " title="Exporter les données vers fichier txt">Exporter les données</button>
+
+    <label for="importFile" style="
+      background:#60a5fa; color:#1e3a8a; font-weight:700; padding:10px 20px; border-radius:12px; cursor:pointer; user-select:none;
+    ">Importer un fichier</label>
+    <input type="file" id="importFile" accept=".txt" style="display:none;" />
+  </div>
+
+  <form id="dayForm" aria-label="Formulaire ajout d'une journée de travail">
+    <div>
+      <label for="dateInput">Date</label>
+      <input type="date" id="dateInput" required />
+    </div>
+    <div>
+      <label for="startInput">Heure début</label>
+      <input type="time" id="startInput" required />
+    </div>
+    <div>
+      <label for="endInput">Heure fin</label>
+      <input type="time" id="endInput" required />
+    </div>
+    <div>
+      <label for="pauseInput">Pause (min)</label>
+      <input type="number" id="pauseInput" min="0" step="1" value="40" required />
+    </div>
+
+    <div>
+      <label for="rateInput">Taux horaire (€)</label>
+      <input type="number" id="rateInput" min="0" step="0.01" value="12.56" required />
+    </div>
+    <div>
+      <label for="normalLimitInput">Seuil heures normales journalières (h)</label>
+      <input type="number" id="normalLimitInput" min="0" step="0.1" value="7" required />
+    </div>
+    <div>
+      <label for="panierInput">Montant panier HT (€)</label>
+      <input type="number" id="panierInput" min="0" step="0.01" value="4.3" required />
+    </div>
+    <div>
+      <label for="indemniteInput">Indemnité déplacement (€)</label>
+      <input type="number" id="indemniteInput" min="0" step="0.01" value="3.7" required />
+    </div>
+    <div>
+      <label for="taxInput">Prélèvement global (%)</label>
+      <input type="number" id="taxInput" min="0" step="0.1" value="23" required />
+    </div>
+    <div>
+      <label for="typeJourInput">Type de jour</label>
+      <select id="typeJourInput" required>
+        <option value="travail" selected>Travail</option>
+        <option value="ferie_non_travaille">Jour férié (non travaillé)</option>
+        <option value="ferie_travaille">Jour férié (travaillé)</option>
+        <option value="conge">Congé</option>
+        <option value="absence">Absence</option>
+      </select>
+    </div>
+    <div id="justificationContainer" style="display:none;">
+      <label for="justificationInput">Justification (absences)</label>
+      <input type="text" id="justificationInput" placeholder="Motif de l'absence" />
+    </div>
+    <button type="submit" aria-label="Ajouter la journée au tableau">Ajouter la journée</button>
+  </form>
+</div>
+
+<script>
+  const dayForm = document.getElementById('dayForm');
+  const weeksContainer = document.getElementById('weeksContainer');
+  const monthFilter = document.getElementById('monthFilter');
+  const weekSelector = document.getElementById('weekSelector');
+  const typeJourInput = document.getElementById('typeJourInput');
+  const justificationContainer = document.getElementById('justificationContainer');
+  const justificationInput = document.getElementById('justificationInput');
+  const exportBtn = document.getElementById('exportBtn');
+  const importFileInput = document.getElementById('importFile');
+
+  let daysData = [];
+  let currentWeeks = [];
+
+  typeJourInput.addEventListener('change', () => {
+    if(typeJourInput.value === 'absence') {
+      justificationContainer.style.display = 'block';
+      justificationInput.required = true;
+    } else {
+      justificationContainer.style.display = 'none';
+      justificationInput.value = '';
+      justificationInput.required = false;
+    }
+  });
+
+  function timeToMinutes(time) {
+    const [h, m] = time.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function getYearMonth(date) {
+    return date ? date.slice(0,7) : '';
+  }
+
+  function getMonday(d) {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    date.setDate(date.getDate() + diff);
+    date.setHours(0,0,0,0);
+    return date;
+  }
+
+  function getSunday(d) {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = (day === 0 ? 0 : 7 - day);
+    date.setDate(date.getDate() + diff);
+    date.setHours(23,59,59,999);
+    return date;
+  }
+
+  function getWeeksInMonth(year, month) {
+    const weeks = [];
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    let currentMonday = getMonday(firstDay);
+    while(currentMonday <= lastDay) {
+      const start = new Date(currentMonday);
+      const end = getSunday(currentMonday);
+      weeks.push({start, end});
+      currentMonday = new Date(currentMonday);
+      currentMonday.setDate(currentMonday.getDate() + 7);
+    }
+    return weeks;
+  }
+
+  function getWeekIndex(dateStr, weeks) {
+    const d = new Date(dateStr);
+    for(let i=0; i < weeks.length; i++) {
+      if(d >= weeks[i].start && d <= weeks[i].end) return i;
+    }
+    return null;
+  }
+
+  function calculateTotalHours(day) {
+    let startMin = timeToMinutes(day.start);
+    let endMin = timeToMinutes(day.end);
+    if (endMin <= startMin) endMin += 24 * 60;
+    let workedMin = endMin - startMin - day.pause;
+    if (workedMin < 0) workedMin = 0;
+    return workedMin / 60;
+  }
+
+  function formatDateFrench(dateStr) {
+    const days = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const d = new Date(dateStr);
+    return days[d.getDay()];
+  }
+
+  exportBtn.addEventListener('click', () => {
+    if(daysData.length === 0) {
+      alert('Aucune donnée à exporter.');
+      return;
+    }
+    const dataStr = JSON.stringify(daysData, null, 2);
+    const blob = new Blob([dataStr], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'heures_sup_data.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const importedData = JSON.parse(ev.target.result);
+        if(!Array.isArray(importedData)) throw new Error('Format invalide');
+        daysData = importedData;
+        updateMonthFilter();
+        refreshTableAndKeepSelection();
+        alert('Import réussi !');
+      } catch(err) {
+        alert('Erreur lors de l\'import : fichier invalide.');
+      }
+    };
+    reader.readAsText(file);
+    importFileInput.value = '';
+  });
+
+  function refreshTableAndKeepSelection() {
+    const selectedMonth = monthFilter.value;
+    const selectedWeek = weekSelector.value;
+
+    const openedWeeks = [];
+    document.querySelectorAll('.week-table').forEach((container, idx) => {
+      if(!container.classList.contains('closed')) openedWeeks.push(idx);
+    });
+
+    renderTable(openedWeeks);
+
+    if(monthFilter.querySelector(`option[value="${selectedMonth}"]`)) {
+      monthFilter.value = selectedMonth;
+    }
+
+    if(weekSelector.querySelector(`option[value="${selectedWeek}"]`)) {
+      weekSelector.value = selectedWeek;
+    }
+
+    filterWeeksDisplay();
+  }
+
+  function renderTable(openedWeeks = []) {
+    weeksContainer.innerHTML = '';
+    const selectedMonth = monthFilter.value;
+    if(!selectedMonth) return;
+    const [year, month] = selectedMonth.split('-').map(Number);
+    const filtered = daysData.filter(d => getYearMonth(d.date) === selectedMonth);
+    const weeks = getWeeksInMonth(year, month - 1);
+    currentWeeks = weeks;
+
+    updateWeekSelector();
+
+    const weeksMap = new Map();
+    weeks.forEach((_, i) => weeksMap.set(i, []));
+    filtered.forEach(day => {
+      const idx = getWeekIndex(day.date, weeks);
+      if(idx !== null) weeksMap.get(idx).push(day);
+    });
+
+    weeksMap.forEach((days, idx) => {
+      days.sort((a,b) => a.date.localeCompare(b.date));
+      const container = document.createElement('div');
+      container.classList.add('week-table');
+      if(!openedWeeks.includes(idx)) container.classList.add('closed');
+
+      const header = document.createElement('div');
+      header.className = 'week-header';
+      if(!openedWeeks.includes(idx)) header.classList.add('closed');
+      header.textContent = `Semaine ${idx+1} (${weeks[idx].start.toLocaleDateString()} - ${weeks[idx].end.toLocaleDateString()})`;
+
+      header.addEventListener('click', () => {
+        container.classList.toggle('closed');
+        header.classList.toggle('closed');
+      });
+
+      container.appendChild(header);
+
+      const tableWrapper = document.createElement('div');
+      tableWrapper.className = 'table-wrapper';
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th>Jour</th>
+          <th>Date</th>
+          <th>Horaires</th>
+          <th>Pause/m</th>
+          <th>Total/h</th>
+          <th>Normal/h</th>
+          <th>Sup. 25%</th>
+          <th>Sup. 50%</th>
+          <th>Panier</th>
+          <th>Indemnité</th>
+          <th>Brut (€)</th>
+          <th>Prélèv. (%)</th>
+          <th>Net (€)</th>
+          <th>Suppr.</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+
+      let weekTotals = {
+        normales: 0,
+        sup25: 0,
+        sup50: 0,
+        panier: 0,
+        indemnite: 0,
+        brut: 0,
+        net: 0
+      };
+
+      let cumulNormales = 0;
+      let cumulSup25 = 0;
+      let cumulSup50 = 0;
+
+      const normalMaxHebdo = 35;
+      const sup25MaxHebdo = 43;
+
+      let totalHeuresSemaine = 0;
+
+      days.forEach(day => {
+        const isWorkDay = day.typeJour === 'travail' || day.typeJour === 'ferie_travaille';
+
+        let totalHours = 0;
+        if(isWorkDay) {
+          totalHours = calculateTotalHours(day);
+          totalHeuresSemaine += totalHours;
+        }
+
+        let normales = 0, sup25 = 0, sup50 = 0;
+        if(isWorkDay) {
+          let normalesJour = Math.min(totalHours, day.normalLimit || 7);
+          let reste = totalHours - normalesJour;
+
+          if (cumulNormales + normalesJour <= normalMaxHebdo) {
+            normales = normalesJour;
+          } else {
+            normales = Math.max(0, normalMaxHebdo - cumulNormales);
+            reste += normalesJour - normales;
+          }
+          cumulNormales += normales;
+
+          if (cumulSup25 + reste <= sup25MaxHebdo - normalMaxHebdo) {
+            sup25 = reste;
+          } else {
+            sup25 = Math.max(0, sup25MaxHebdo - normalMaxHebdo - cumulSup25);
+            sup50 = reste - sup25;
+          }
+          cumulSup25 += sup25;
+          cumulSup50 += sup50;
+        }
+
+        const sup25Rate = day.rate * 1.25;
+        const sup50Rate = day.rate * 1.5;
+
+        let majoration = 1;
+        if(day.typeJour === 'ferie_travaille') majoration = 2;
+
+        const normalesText = isWorkDay ? `${normales.toFixed(2)} h | ${(normales*day.rate*majoration).toFixed(2)} €${day.typeJour==='ferie_travaille'?' FT':''}` : '-';
+        const sup25Text = isWorkDay ? `${sup25.toFixed(2)} h | ${(sup25*day.rate*1.25*majoration).toFixed(2)} €${day.typeJour==='ferie_travaille'?' FT':''}` : '-';
+        const sup50Text = isWorkDay ? `${sup50.toFixed(2)} h | ${(sup50*day.rate*1.5*majoration).toFixed(2)} €${day.typeJour==='ferie_travaille'?' FT':''}` : '-';
+
+        const brutBase = normales * day.rate + sup25 * sup25Rate + sup50 * sup50Rate;
+        const brut = brutBase * majoration;
+        const tax = brut * (day.tax / 100);
+        const net = brut - tax;
+
+        weekTotals.normales += normales;
+        weekTotals.sup25 += sup25;
+        weekTotals.sup50 += sup50;
+        weekTotals.panier += day.typeJour === 'absence' ? 0 : day.panier;
+        weekTotals.indemnite += day.typeJour === 'absence' ? 0 : day.indemnite;
+        weekTotals.brut += brut;
+        weekTotals.net += net;
+
+        const panierText = day.typeJour === 'absence' ? '-' : day.panier.toFixed(2);
+        const indemniteText = day.typeJour === 'absence' ? '-' : day.indemnite.toFixed(2);
+
+        const totalHoursText = isWorkDay ? totalHours.toFixed(2) :
+          day.typeJour === 'ferie_non_travaille' ? 'Jour férié' :
+          day.typeJour === 'conge' ? 'Congé' :
+          day.typeJour === 'absence' ? 'Absence' : '-';
+
+        const justificationText = day.typeJour === 'absence' && day.justification ? day.justification : '';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${formatDateFrench(day.date)}</td>
+          <td>${day.date}</td>
+          <td>${day.start} - ${day.end}</td>
+          <td>${day.pause}</td>
+          <td>${totalHoursText}</td>
+          <td>${normalesText}</td>
+          <td>${sup25Text}</td>
+          <td>${sup50Text}</td>
+          <td>${panierText}</td>
+          <td>${indemniteText}</td>
+          <td>${isWorkDay ? brut.toFixed(2) : '-'}</td>
+          <td>${isWorkDay ? day.tax.toFixed(2) : '-'}</td>
+          <td>${isWorkDay ? net.toFixed(2) : '-'}</td>
+          <td>
+            <button type="button" class="delete-row" title="Supprimer cette ligne">✖</button>
+            ${justificationText ? `<span class="tooltip-icon" title="${justificationText}">ℹ️</span>` : ''}
+          </td>
+        `;
+        tr.querySelector('button.delete-row').addEventListener('click', () => {
+          daysData = daysData.filter(d => d !== day);
+          updateMonthFilter();
+          refreshTableAndKeepSelection();
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+
+      const tfoot = document.createElement('tfoot');
+      const trTotals = document.createElement('tr');
+      trTotals.innerHTML = `
+        <td colspan="3" style="text-align:left; font-weight:bold;">Total semaine</td>
+        <td>-</td>
+        <td>${totalHeuresSemaine.toFixed(2)}</td>
+        <td>${weekTotals.normales.toFixed(2)}</td>
+        <td>${weekTotals.sup25.toFixed(2)}</td>
+        <td>${weekTotals.sup50.toFixed(2)}</td>
+        <td>${weekTotals.panier.toFixed(2)}</td>
+        <td>${weekTotals.indemnite.toFixed(2)}</td>
+        <td>${weekTotals.brut.toFixed(2)}</td>
+        <td></td>
+        <td>${weekTotals.net.toFixed(2)}</td>
+        <td></td>
+      `;
+      tfoot.appendChild(trTotals);
+      table.appendChild(tfoot);
+
+      tableWrapper.appendChild(table);
+      container.appendChild(tableWrapper);
+      weeksContainer.appendChild(container);
+    });
+
+    filterWeeksDisplay();
+
+    // Totaux mensuels cumulés semaine par semaine
+    const totalsMonth = {
+      normales: 0,
+      sup25: 0,
+      sup50: 0,
+      panier: 0,
+      indemnite: 0,
+      brut: 0,
+      net: 0,
+      totalHeures: 0
+    };
+
+    const daysByWeek = new Map();
+    currentWeeks.forEach((_, i) => daysByWeek.set(i, []));
+    filtered.forEach(day => {
+      const idx = getWeekIndex(day.date, currentWeeks);
+      if(idx !== null) daysByWeek.get(idx).push(day);
+    });
+
+    daysByWeek.forEach((days) => {
+      let cumulNormales = 0;
+      let cumulSup25 = 0;
+      let cumulSup50 = 0;
+
+      let weekTotals = {
+        normales: 0,
+        sup25: 0,
+        sup50: 0,
+        panier: 0,
+        indemnite: 0,
+        brut: 0,
+        net: 0,
+        totalHeures: 0
+      };
+
+      days.forEach(day => {
+        const isWorkDay = day.typeJour === 'travail' || day.typeJour === 'ferie_travaille';
+        if(!isWorkDay && day.typeJour !== 'absence') {
+          weekTotals.panier += day.panier;
+          weekTotals.indemnite += day.indemnite;
+          return;
+        }
+        if(isWorkDay) {
+          const totalHours = calculateTotalHours(day);
+          weekTotals.totalHeures += totalHours;
+
+          let normalesJour = Math.min(totalHours, day.normalLimit || 7);
+          let reste = totalHours - normalesJour;
+
+          let normales = 0, sup25 = 0, sup50 = 0;
+
+          if(cumulNormales + normalesJour <= 35) {
+            normales = normalesJour;
+          } else {
+            normales = Math.max(0, 35 - cumulNormales);
+            reste += normalesJour - normales;
+          }
+          cumulNormales += normales;
+
+          if(cumulSup25 + reste <= 8) {
+            sup25 = reste;
+          } else {
+            sup25 = Math.max(0, 8 - cumulSup25);
+            sup50 = reste - sup25;
+          }
+          cumulSup25 += sup25;
+          cumulSup50 += sup50;
+
+          let majoration = 1;
+          if(day.typeJour === 'ferie_travaille') majoration = 2;
+
+          const sup25Rate = day.rate * 1.25;
+          const sup50Rate = day.rate * 1.5;
+
+          const brutBase = normales * day.rate + sup25 * sup25Rate + sup50 * sup50Rate;
+          const brut = brutBase * majoration;
+          const tax = brut * (day.tax / 100);
+          const net = brut - tax;
+
+          weekTotals.normales += normales;
+          weekTotals.sup25 += sup25;
+          weekTotals.sup50 += sup50;
+          weekTotals.brut += brut;
+          weekTotals.net += net;
+          weekTotals.panier += day.panier;
+          weekTotals.indemnite += day.indemnite;
+        }
+      });
+
+      totalsMonth.normales += weekTotals.normales;
+      totalsMonth.sup25 += weekTotals.sup25;
+      totalsMonth.sup50 += weekTotals.sup50;
+      totalsMonth.panier += weekTotals.panier;
+      totalsMonth.indemnite += weekTotals.indemnite;
+      totalsMonth.brut += weekTotals.brut;
+      totalsMonth.net += weekTotals.net;
+      totalsMonth.totalHeures += weekTotals.totalHeures;
+    });
+
+    document.getElementById('totalNormal').textContent = totalsMonth.normales.toFixed(2);
+    document.getElementById('totalOver25').textContent = totalsMonth.sup25.toFixed(2);
+    document.getElementById('totalOver50').textContent = totalsMonth.sup50.toFixed(2);
+    document.getElementById('totalHeures').textContent = totalsMonth.totalHeures.toFixed(2);
+    document.getElementById('totalPanier').textContent = totalsMonth.panier.toFixed(2);
+    document.getElementById('totalIndemnite').textContent = totalsMonth.indemnite.toFixed(2);
+    document.getElementById('totalBrut').textContent = totalsMonth.brut.toFixed(2);
+    document.getElementById('totalNet').textContent = totalsMonth.net.toFixed(2);
+  }
+
+  dayForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const newEntry = {
+      date: document.getElementById('dateInput').value,
+      start: document.getElementById('startInput').value,
+      end: document.getElementById('endInput').value,
+      pause: parseFloat(document.getElementById('pauseInput').value) || 0,
+      rate: parseFloat(document.getElementById('rateInput').value) || 0,
+      normalLimit: parseFloat(document.getElementById('normalLimitInput').value) || 7,
+      panier: parseFloat(document.getElementById('panierInput').value) || 0,
+      indemnite: parseFloat(document.getElementById('indemniteInput').value) || 0,
+      tax: parseFloat(document.getElementById('taxInput').value) || 0,
+      typeJour: typeJourInput.value || 'travail',
+      justification: typeJourInput.value === 'absence' ? justificationInput.value.trim() : ''
+    };
+
+    if(!newEntry.date) {
+      alert('Veuillez saisir une date valide.');
+      return;
+    }
+    if(newEntry.typeJour === 'absence' && !newEntry.justification) {
+      alert('Veuillez fournir une justification pour l\'absence.');
+      return;
+    }
+
+    // Eviter doublon de date:
+    if(daysData.some(d => d.date === newEntry.date)) {
+      alert('Une entrée pour cette date existe déjà. Supprimez-la avant d\'ajouter une nouvelle.');
+      return;
+    }
+
+    daysData.push(newEntry);
+    updateMonthFilter();
+    refreshTableAndKeepSelection();
+    dayForm.reset();
+
+    document.getElementById('startInput').value = '05:00';
+    document.getElementById('endInput').value = '12:40';
+    document.getElementById('pauseInput').value = 40;
+    document.getElementById('rateInput').value = 12.56;
+    document.getElementById('normalLimitInput').value = 7;
+    document.getElementById('panierInput').value = 4.3;
+    document.getElementById('indemniteInput').value = 3.7;
+    document.getElementById('taxInput').value = 23;
+    typeJourInput.value = 'travail';
+    justificationInput.value = '';
+    justificationContainer.style.display = 'none';
+  });
+
+  monthFilter.addEventListener('change', () => {
+    refreshTableAndKeepSelection();
+  });
+
+  weekSelector.addEventListener('change', () => {
+    filterWeeksDisplay();
+  });
+
+  function updateMonthFilter() {
+    const months = Array.from(new Set(daysData.map(d => getYearMonth(d.date)))).sort();
+    monthFilter.innerHTML = '';
+    if(months.length === 0) {
+      const option = document.createElement('option');
+      option.textContent = 'Aucun mois disponible';
+      option.value = '';
+      monthFilter.appendChild(option);
+      return;
+    }
+    months.forEach(m => {
+      const option = document.createElement('option');
+      option.value = m;
+      const [y, mm] = m.split('-');
+      option.textContent = `${mm}/${y}`;
+      monthFilter.appendChild(option);
+    });
+    monthFilter.value = months[months.length -1];
+  }
+
+  function updateWeekSelector() {
+    weekSelector.innerHTML = '';
+
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'Toutes les semaines';
+    weekSelector.appendChild(allOption);
+
+    currentWeeks.forEach((week, i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.textContent = `Semaine ${i+1} (${week.start.toLocaleDateString()} - ${week.end.toLocaleDateString()})`;
+      weekSelector.appendChild(option);
+    });
+
+    weekSelector.value = 'all';
+  }
+
+  function filterWeeksDisplay() {
+    const selected = weekSelector.value;
+    const allContainers = weeksContainer.querySelectorAll('.week-table');
+    allContainers.forEach((container, idx) => {
+      if(selected === 'all' || Number(selected) === idx) {
+        container.style.display = '';
+      } else {
+        container.style.display = 'none';
+      }
+    });
+  }
+
+  updateMonthFilter();
+
+</script>
+
+</body>
+</html>
